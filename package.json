@@ -1,0 +1,12 @@
+{
+  "name": "trip_globe",
+  "version": "1.0.0",
+  "description": "Visualization of my trips on a globe",
+  "main": "index.js",
+  "author": "Pierre Schutz <pierreschutz@rocketmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "d3": "^6.7.0",
+    "d3-fetch": "^2.0.0"
+  }
+}
