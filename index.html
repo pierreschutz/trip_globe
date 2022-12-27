@@ -11,17 +11,44 @@
 </head>
 <body>
 
-<div class="main">
+<div class="content">
+    <div class="appbar">
+        <a href="https://pierreschutz.com" class="appbar-link">
+            <img
+                    src="images/logo.svg"
+                    alt="Pierre logo"
+                    width="36" height="36"
+            >
+        </a>
+        <div class="appbar-divider">
+            <h1>What a beautiful world!</h1>
 
-    <div class="center">
-        <h1 class="title">What a beautiful world! </h1>
-        <svg id="svg" width="800px" height="600px" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid"></svg>
-        <p class="footer">&copy; Pierre Schutz 2021</p>
+        </div>
+
+        <a href="https://github.com/pierreschutz/" target="_blank" class="appbar-link">
+            <img src="images/icons8-github.svg"
+                 width="36"
+                 height="36"
+            />
+        </a>
+
     </div>
+    <div class="title">
+        <p class="description">Interactive and colorful world map visualization.
+            Click on the globe and drag to make it move. <br/>
+            (This is still a work in progress. Watch out for new stuff ;))
+        </p>
 
+    </div>
+    <div class="viz">
+        <div id="mapViz"></div>
+    </div>
 
 </div>
 
+<div class="footer">
+    <span class="footer-text">&copy; Pierre Schutz 2023</span>
+</div>
 
 <script type="text/javascript" src="https://d3js.org/topojson.v1.min.js"></script>
 <script type="text/javascript" src="index.js"></script>
