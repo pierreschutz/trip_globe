@@ -7,8 +7,8 @@ d3.json("world.json", function(world) {
     const viz_width = viz.node().getBoundingClientRect().width
     const viz_height = viz.node().getBoundingClientRect().height
 
-    const svg_width = viz_width//*0.9
-    const svg_height = viz_height//*0.9
+    const svg_width = viz_width*0.98
+    const svg_height = viz_height*0.98
 
 
 
@@ -34,7 +34,6 @@ d3.json("world.json", function(world) {
         .attr('cx', mid)
         .attr('cy', mid)
         .attr('r', radius)
-        .attr('transform', 'translate(0, 0)')
         .attr('fill', 'lightBlue');
 
 
@@ -69,9 +68,7 @@ d3.json("world.json", function(world) {
         })
         .on("drag", function() {
             // Rotate the globe
-            console.log(d3.event)
             const r2 = projection.rotate();
-            console.log(r2)
             projection.rotate([d3.event.x, -d3.event.y, 0]); //r2[2]]); Only two axis rotation at the same time.
             // Update paths with rotation
             content.selectAll("path").attr("d", path);
@@ -79,7 +76,7 @@ d3.json("world.json", function(world) {
 
 
     // Enable zoom (rescale only
-    svg.call(d3.behavior.zoom()
+    content.call(d3.behavior.zoom()
         .scaleExtent([1, 4])
         .on("zoom", function () {
             const scale = d3.event.scale
