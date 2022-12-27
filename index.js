@@ -2,23 +2,51 @@
 //Url: https://unpkg.com/world-atlas@1.1.4/world/50m.json
 d3.json("world.json", function(world) {
 
+    const viz = d3.select('#mapViz')
+
+    const viz_width = viz.node().getBoundingClientRect().width
+    const viz_height = viz.node().getBoundingClientRect().height
+
+    const svg_width = viz_width//*0.9
+    const svg_height = viz_height//*0.9
+
+
+
+    const scale = 800
+    const mid = scale/2
+    const radius = scale/3
+
+
+    const svg = viz
+        .append('svg')
+        .attr('width', svg_width)
+        .attr('height', svg_height)
+        .attr('viewBox',`0 0 ${scale} ${scale}`)
+        .attr('preserveAspectRatio',"xMidYMid")
+
+
+    const content = svg.append('g')
+
+
+
     // Add blue background for the sea
-    d3.select("#svg").append('circle')
-        .attr('cx', 400)
-        .attr('cy', 300)
-        .attr('r', 245)
+    content.append('circle')
+        .attr('cx', mid)
+        .attr('cy', mid)
+        .attr('r', radius)
+        .attr('transform', 'translate(0, 0)')
         .attr('fill', 'lightBlue');
 
 
 
     // Build the map projection
-    let projection = d3.geo.orthographic().scale(245).translate([400, 300]).clipAngle(90);
+    let projection = d3.geo.orthographic().scale(radius).translate([mid, mid]).clipAngle(90);
     let path = d3.geo.path().projection(projection);
     let countries = topojson.feature(world, world.objects.countries).features;
     let color = d3.scale.category20c();
 
     // Add colors to the countries
-    d3.select("#svg").selectAll("path").data(countries)
+    content.selectAll("path").data(countries)
         .enter().append("path").attr(
             {
             "d": path,
@@ -33,7 +61,7 @@ d3.json("world.json", function(world) {
 
 
     // Enable the user to rotate the map
-    d3.select("#svg").call(d3.behavior.drag()
+    content.call(d3.behavior.drag()
         .origin(function() {
             // Save the initial rotation position
             const r1 = projection.rotate();
@@ -41,11 +69,24 @@ d3.json("world.json", function(world) {
         })
         .on("drag", function() {
             // Rotate the globe
+            console.log(d3.event)
             const r2 = projection.rotate();
-            projection.rotate([d3.event.x, -d3.event.y, r2[2]]);
+            console.log(r2)
+            projection.rotate([d3.event.x, -d3.event.y, 0]); //r2[2]]); Only two axis rotation at the same time.
             // Update paths with rotation
-            d3.select("#svg").selectAll("path").attr("d", path);
+            content.selectAll("path").attr("d", path);
         }));
+
+
+    // Enable zoom (rescale only
+    svg.call(d3.behavior.zoom()
+        .scaleExtent([1, 4])
+        .on("zoom", function () {
+            const scale = d3.event.scale
+            svg.attr('transform', `scale(${scale})`)
+        })
+    )
+
 
 
 
