@@ -87,6 +87,7 @@ d3.json("world.json", function(world) {
 
     // Enable the user to rotate the map
     const degreesPerPixel = 360 / (2 * Math.PI * radius);
+    const maxLatRotation = 50;
     content.call(d3.behavior.drag()
         .on("dragstart", function () {
             if (d3.event.sourceEvent) {
@@ -100,6 +101,7 @@ d3.json("world.json", function(world) {
                 rotate[1] - d3.event.dy * degreesPerPixel,
                 rotate[2]
             ];
+            newRotate[1] = Math.max(-maxLatRotation, Math.min(maxLatRotation, newRotate[1]));
             projection.rotate(newRotate);
             // Update paths with rotation
             content.selectAll("path").attr("d", path);
