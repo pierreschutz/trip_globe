@@ -1,98 +1,450 @@
 {
-  "036": {
-    "name": "Australia",
-    "fact": "Australia is home to more kangaroos than people."
-  },
-  "076": {
-    "name": "Brazil",
-    "fact": "Brazil produces a third of the world’s coffee."
+  "643": {
+    "name": "Russia",
+    "fact": "Russia spans 11 time zones, the most of any nation."
   },
   "124": {
     "name": "Canada",
-    "fact": "Canada has more coastline than any other country."
+    "fact": "Canada contains nearly 20% of the world's surface fresh water in its lakes."
+  },
+  "840": {
+    "name": "United States",
+    "fact": "The U.S. Interstate Highway System doubles as the world's largest public works project."
   },
   "156": {
     "name": "China",
-    "fact": "China’s Great Wall stretches over 21,000 km."
+    "fact": "China operates the world's longest high-speed rail network, stretching over 40,000 km."
   },
-  "250": {
-    "name": "France",
-    "fact": "France is the most visited country in the world."
+  "076": {
+    "name": "Brazil",
+    "fact": "Brazil's Amazon Basin produces about a fifth of Earth's flowing fresh water."
   },
-  "276": {
-    "name": "Germany",
-    "fact": "Germany is credited with inventing the printing press."
+  "036": {
+    "name": "Australia",
+    "fact": "Australia's Great Barrier Reef is the largest living structure on the planet."
   },
   "356": {
     "name": "India",
-    "fact": "India’s Kumbh Mela gathering is visible from space."
+    "fact": "India's Kumbh Mela gathering is visible from space because of its sheer scale."
+  },
+  "032": {
+    "name": "Argentina",
+    "fact": "Argentina's Patagonia hosts the advancing Perito Moreno Glacier."
+  },
+  "398": {
+    "name": "Kazakhstan",
+    "fact": "Kazakhstan's Baikonur Cosmodrome launched both Sputnik and Yuri Gagarin."
+  },
+  "012": {
+    "name": "Algeria",
+    "fact": "Over 80% of Algeria's landmass lies within the Sahara Desert."
+  },
+  "180": {
+    "name": "Democratic Republic of the Congo",
+    "fact": "The Congo River in the DRC powers the world's deepest river canyon."
+  },
+  "682": {
+    "name": "Saudi Arabia",
+    "fact": "Saudi Arabia built the world's largest desalinated-water network to supply its cities."
+  },
+  "484": {
+    "name": "Mexico",
+    "fact": "Mexico City was built over a lake and is slowly sinking each year."
   },
   "360": {
     "name": "Indonesia",
-    "fact": "Indonesia sits on over 17,000 islands."
+    "fact": "Indonesia straddles the Equator with more than 17,000 islands."
   },
-  "380": {
-    "name": "Italy",
-    "fact": "Italy has more UNESCO World Heritage Sites than any other country."
+  "729": {
+    "name": "Sudan",
+    "fact": "Sudan is home to more ancient pyramids than Egypt."
   },
-  "392": {
-    "name": "Japan",
-    "fact": "Japan has more than 5.5 million vending machines."
+  "434": {
+    "name": "Libya",
+    "fact": "Libya's Great Man-Made River pumps fossil water from beneath the Sahara."
   },
-  "410": {
-    "name": "South Korea",
-    "fact": "South Korea has the world’s fastest average internet speed."
+  "364": {
+    "name": "Iran",
+    "fact": "Iran's ancient qanat tunnels still deliver water across arid regions today."
   },
-  "458": {
-    "name": "Malaysia",
-    "fact": "Malaysia’s Petronas Towers were the tallest buildings from 1998 to 2004."
+  "496": {
+    "name": "Mongolia",
+    "fact": "Mongolia's vast steppe supports one of the last great nomadic cultures."
   },
-  "528": {
-    "name": "Netherlands",
-    "fact": "About a third of the Netherlands lies below sea level."
+  "604": {
+    "name": "Peru",
+    "fact": "Peru's Andes contain the world's highest commercial navigable lake, Titicaca."
   },
-  "554": {
-    "name": "New Zealand",
-    "fact": "New Zealand was the first country to give women the right to vote."
+  "148": {
+    "name": "Chad",
+    "fact": "Chad's Lake Chad has shrunk to a fraction of its 1960 size."
   },
-  "643": {
-    "name": "Russia",
-    "fact": "Russia spans eleven time zones."
+  "562": {
+    "name": "Niger",
+    "fact": "Niger hosts the Aïr Mountains, a Saharan massif nicknamed Africa's Switzerland."
+  },
+  "024": {
+    "name": "Angola",
+    "fact": "Angola's Kalandula Falls drop wider than Niagara."
+  },
+  "466": {
+    "name": "Mali",
+    "fact": "Mali's ancient city of Timbuktu once led the Islamic world's scholarship."
   },
   "710": {
     "name": "South Africa",
-    "fact": "South Africa has three capital cities."
+    "fact": "South Africa recognizes 11 official languages."
   },
-  "724": {
-    "name": "Spain",
-    "fact": "Spain produces nearly half of the world’s olive oil."
+  "170": {
+    "name": "Colombia",
+    "fact": "Colombia holds the world's highest bird species diversity."
   },
-  "752": {
-    "name": "Sweden",
-    "fact": "Sweden’s capital Stockholm is built on 14 islands."
+  "231": {
+    "name": "Ethiopia",
+    "fact": "Ethiopia uses a calendar roughly seven years behind the Gregorian system."
   },
-  "756": {
-    "name": "Switzerland",
-    "fact": "Switzerland is famous for inventing modern milk chocolate."
+  "068": {
+    "name": "Bolivia",
+    "fact": "Bolivia's Salar de Uyuni becomes the planet's largest natural mirror after rains."
   },
-  "792": {
-    "name": "Turkey",
-    "fact": "Istanbul is the only city in the world spanning two continents."
+  "478": {
+    "name": "Mauritania",
+    "fact": "Mauritania's Eye of the Sahara is visible from space as a giant bullseye."
   },
   "818": {
     "name": "Egypt",
-    "fact": "Egypt’s pyramids aligned with the stars of Orion’s belt."
+    "fact": "Egypt's Nile Delta fans across 240 km of Mediterranean coastline."
   },
-  "826": {
-    "name": "United Kingdom",
-    "fact": "The UK’s London Underground is the oldest metro system, opened in 1863."
+  "834": {
+    "name": "Tanzania",
+    "fact": "Tanzania hosts Africa's highest peak, Mount Kilimanjaro."
   },
-  "840": {
-    "name": "United States of America",
-    "fact": "The United States has the world’s largest economy."
+  "566": {
+    "name": "Nigeria",
+    "fact": "Nigeria's Nollywood film industry releases hundreds of movies monthly."
+  },
+  "862": {
+    "name": "Venezuela",
+    "fact": "Venezuela's Ángel Falls is the world's highest uninterrupted waterfall."
+  },
+  "516": {
+    "name": "Namibia",
+    "fact": "Namibia's Namib Desert dune field is one of the oldest deserts on Earth."
+  },
+  "508": {
+    "name": "Mozambique",
+    "fact": "Mozambique's coastline spans 2,500 km along the Indian Ocean."
+  },
+  "586": {
+    "name": "Pakistan",
+    "fact": "Pakistan's Karakoram Highway is among the highest paved roads globally."
+  },
+  "792": {
+    "name": "Turkey",
+    "fact": "Istanbul, Turkey's largest city, straddles two continents."
+  },
+  "152": {
+    "name": "Chile",
+    "fact": "Chile stretches across 38 degrees of latitude, touching almost every climate."
   },
   "894": {
     "name": "Zambia",
-    "fact": "Zambia shares Victoria Falls with Zimbabwe."
+    "fact": "Zambia shares Victoria Falls, called Mosi-oa-Tunya, with Zimbabwe."
+  },
+  "104": {
+    "name": "Myanmar",
+    "fact": "Myanmar houses the world's largest teak forest reserves."
+  },
+  "004": {
+    "name": "Afghanistan",
+    "fact": "Afghanistan's Bamiyan cliffs once held giant Buddha statues carved in the 500s."
+  },
+  "728": {
+    "name": "South Sudan",
+    "fact": "South Sudan's Sudd swamp is one of the world's largest wetlands."
+  },
+  "706": {
+    "name": "Somalia",
+    "fact": "Somalia has Africa's longest mainland coastline."
+  },
+  "140": {
+    "name": "Central African Republic",
+    "fact": "The Central African Republic sits near the geographic heart of Africa."
+  },
+  "804": {
+    "name": "Ukraine",
+    "fact": "Ukraine's black soil belt is among the planet's most fertile."
+  },
+  "450": {
+    "name": "Madagascar",
+    "fact": "Over 80% of Madagascar's wildlife exists nowhere else on Earth."
+  },
+  "072": {
+    "name": "Botswana",
+    "fact": "Botswana's Okavango Delta is a vast inland river that never reaches the sea."
+  },
+  "404": {
+    "name": "Kenya",
+    "fact": "Kenya lies on the Equator yet snows cap Mount Kenya seasonally."
+  },
+  "250": {
+    "name": "France",
+    "fact": "France's territory spans the globe with overseas departments in four oceans."
+  },
+  "887": {
+    "name": "Yemen",
+    "fact": "Yemen's Socotra Island shelters alien-looking dragon blood trees."
+  },
+  "764": {
+    "name": "Thailand",
+    "fact": "Thailand is the only Southeast Asian nation never colonized by Europe."
+  },
+  "724": {
+    "name": "Spain",
+    "fact": "Spain operates the world's oldest working lighthouse, the Tower of Hercules."
+  },
+  "795": {
+    "name": "Turkmenistan",
+    "fact": "Turkmenistan's Darvaza crater has burned continuously for five decades."
+  },
+  "120": {
+    "name": "Cameroon",
+    "fact": "Cameroon is nicknamed Africa in miniature for its varied geography."
+  },
+  "598": {
+    "name": "Papua New Guinea",
+    "fact": "Papua New Guinea hosts over 800 distinct languages."
+  },
+  "752": {
+    "name": "Sweden",
+    "fact": "Sweden rebuilds its iconic ICEHOTEL from river ice every winter."
+  },
+  "860": {
+    "name": "Uzbekistan",
+    "fact": "Uzbekistan's Silk Road cities glow with turquoise-tiled madrasas."
+  },
+  "504": {
+    "name": "Morocco",
+    "fact": "Morocco's Chefchaouen medina is famed for sky-blue alleys."
+  },
+  "368": {
+    "name": "Iraq",
+    "fact": "Iraq's Mesopotamian marshes were restored after being nearly drained in the 1990s."
+  },
+  "600": {
+    "name": "Paraguay",
+    "fact": "Paraguay hosts Itaipu Dam, once the world's largest hydropower plant."
+  },
+  "716": {
+    "name": "Zimbabwe",
+    "fact": "Zimbabwe's Matobo Hills shelter some of Africa's densest rock art sites."
+  },
+  "392": {
+    "name": "Japan",
+    "fact": "Japan has over 5.5 million vending machines serving everything from ramen to umbrellas."
+  },
+  "276": {
+    "name": "Germany",
+    "fact": "Germany hosts the world's largest trade fair grounds in Hannover."
+  },
+  "178": {
+    "name": "Republic of the Congo",
+    "fact": "The Republic of the Congo protects vast tracts of untouched rainforest."
+  },
+  "246": {
+    "name": "Finland",
+    "fact": "Finland boasts more saunas than cars."
+  },
+  "704": {
+    "name": "Vietnam",
+    "fact": "Vietnam's Ha Long Bay holds nearly 2,000 limestone islets."
+  },
+  "458": {
+    "name": "Malaysia",
+    "fact": "Malaysia's Petronas Towers were the tallest twin towers for almost 20 years."
+  },
+  "578": {
+    "name": "Norway",
+    "fact": "Norway generates almost all its electricity from hydropower."
+  },
+  "384": {
+    "name": "Côte d'Ivoire",
+    "fact": "Côte d'Ivoire supplies over 40% of the world's cocoa beans."
+  },
+  "616": {
+    "name": "Poland",
+    "fact": "Poland's Wieliczka Salt Mine features chapels carved underground."
+  },
+  "512": {
+    "name": "Oman",
+    "fact": "Oman built the Middle East's oldest still-operating frankincense port."
+  },
+  "380": {
+    "name": "Italy",
+    "fact": "Italy contains more UNESCO World Heritage Sites than any other country."
+  },
+  "608": {
+    "name": "Philippines",
+    "fact": "The Philippines is the texting capital of the world, sending billions of SMS daily."
+  },
+  "218": {
+    "name": "Ecuador",
+    "fact": "Ecuador's biodiversity includes 10% of the world's known plant species."
+  },
+  "854": {
+    "name": "Burkina Faso",
+    "fact": "Burkina Faso's Gourounsi villages glow with painted earthen patterns."
+  },
+  "554": {
+    "name": "New Zealand",
+    "fact": "New Zealand's Milford Sound was carved by glaciers into dramatic fjords."
+  },
+  "266": {
+    "name": "Gabon",
+    "fact": "Gabon keeps 11% of its land in national parks."
+  },
+  "324": {
+    "name": "Guinea",
+    "fact": "Guinea's Fouta Djallon highlands source West Africa's major rivers."
+  },
+  "826": {
+    "name": "United Kingdom",
+    "fact": "The UK built the world's first underground railway in 1863."
+  },
+  "800": {
+    "name": "Uganda",
+    "fact": "Uganda hosts half of the planet's remaining mountain gorillas."
+  },
+  "288": {
+    "name": "Ghana",
+    "fact": "Ghana was the first sub-Saharan African nation to gain independence in 1957."
+  },
+  "642": {
+    "name": "Romania",
+    "fact": "Romania's Palace of Parliament is the world's heaviest building."
+  },
+  "418": {
+    "name": "Laos",
+    "fact": "Laos is the only landlocked nation in Southeast Asia."
+  },
+  "328": {
+    "name": "Guyana",
+    "fact": "Guyana's Kaieteur Falls drops five times higher than Niagara."
+  },
+  "112": {
+    "name": "Belarus",
+    "fact": "Belarus is blanketed by forests covering 40% of its territory."
+  },
+  "417": {
+    "name": "Kyrgyzstan",
+    "fact": "Kyrgyzstan's Issyk-Kul Lake never freezes despite alpine winters."
+  },
+  "686": {
+    "name": "Senegal",
+    "fact": "Senegal hosts the Pink Lake, colored by salt-loving algae."
+  },
+  "760": {
+    "name": "Syria",
+    "fact": "Syria's ancient city of Palmyra once linked Rome to Persia by caravan."
+  },
+  "116": {
+    "name": "Cambodia",
+    "fact": "Cambodia's Angkor Wat is the largest religious monument on Earth."
+  },
+  "858": {
+    "name": "Uruguay",
+    "fact": "Uruguay pioneered nationwide free laptops for schoolchildren."
+  },
+  "788": {
+    "name": "Tunisia",
+    "fact": "Tunisia's Star Wars film sets still stand in the Sahara."
+  },
+  "740": {
+    "name": "Suriname",
+    "fact": "Suriname is the only nation outside Europe with Dutch as the official language."
+  },
+  "524": {
+    "name": "Nepal",
+    "fact": "Nepal is home to eight of the world's ten tallest mountains."
+  },
+  "050": {
+    "name": "Bangladesh",
+    "fact": "Bangladesh exports more jute fiber than any other country."
+  },
+  "762": {
+    "name": "Tajikistan",
+    "fact": "Tajikistan is dominated by the Pamir Mountains, called the Roof of the World."
+  },
+  "300": {
+    "name": "Greece",
+    "fact": "Greece's coastline stretches longer than mainland Africa's despite its size."
+  },
+  "558": {
+    "name": "Nicaragua",
+    "fact": "Nicaragua's Lake Nicaragua contains freshwater sharks."
+  },
+  "232": {
+    "name": "Eritrea",
+    "fact": "Eritrea's capital Asmara preserves Art Deco architecture from the 1930s."
+  },
+  "408": {
+    "name": "North Korea",
+    "fact": "North Korea's Rungrado 1st of May Stadium seats 114,000 spectators."
+  },
+  "454": {
+    "name": "Malawi",
+    "fact": "Malawi's Lake Malawi hosts more fish species than any other lake."
+  },
+  "204": {
+    "name": "Benin",
+    "fact": "Benin birthed the Kingdom of Dahomey, famed for its women warriors."
+  },
+  "340": {
+    "name": "Honduras",
+    "fact": "Honduras's Bay Islands sit atop the second-longest barrier reef."
+  },
+  "430": {
+    "name": "Liberia",
+    "fact": "Liberia's capital Monrovia is named after U.S. President James Monroe."
+  },
+  "100": {
+    "name": "Bulgaria",
+    "fact": "Bulgaria produces the famed rose oil used in Parisian perfumes."
+  },
+  "192": {
+    "name": "Cuba",
+    "fact": "Cuba's Old Havana holds one of the best-preserved Spanish colonial cores."
+  },
+  "320": {
+    "name": "Guatemala",
+    "fact": "Guatemala's Tikal temples once led the Maya world."
+  },
+  "352": {
+    "name": "Iceland",
+    "fact": "Iceland generates almost 100% of its electricity from renewable sources."
+  },
+  "410": {
+    "name": "South Korea",
+    "fact": "South Korea has the world's fastest average internet speeds."
+  },
+  "348": {
+    "name": "Hungary",
+    "fact": "Hungary's Budapest sits atop more than 120 thermal springs."
+  },
+  "620": {
+    "name": "Portugal",
+    "fact": "Portugal's coastline inspired explorers who mapped the globe."
+  },
+  "400": {
+    "name": "Jordan",
+    "fact": "Jordan's Petra was carved into rose-red cliffs over 2,000 years ago."
+  },
+  "031": {
+    "name": "Azerbaijan",
+    "fact": "Azerbaijan's capital Baku is famed for natural gas flames that burn from the ground."
+  },
+  "040": {
+    "name": "Austria",
+    "fact": "Austria's Alpine Grossglockner High Alpine Road climbs above 2,500 meters."
   }
 }

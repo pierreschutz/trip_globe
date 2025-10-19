@@ -164,7 +164,7 @@ function renderGlobe(world, nameById, facts, visitedSet) {
         var fallbackName = normalizedId && nameById[normalizedId] ? nameById[normalizedId] : ("Country " + (normalizedId || id));
         var info = (normalizedId && facts[normalizedId]) || {};
         var name = info.name || fallbackName;
-        var fact = info.fact || ("Fun fact coming soon for " + name + ".");
+        var fact = info.fact || name;
         return { name: name, fact: fact };
     }
 
