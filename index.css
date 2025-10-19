@@ -355,7 +355,7 @@ head {
     max-width: 240px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     transition: opacity 0.18s ease-out;
-    z-index: 20;
+    z-index: 1200;
 }
 
 .country-tooltip__title {
