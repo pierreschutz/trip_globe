@@ -44,9 +44,33 @@ function parseDateFromString(value) {
     return parsed;
 }
 
-function formatDuration(startDate, endDate) {
+function formatDurationFromDays(totalDays, includeLessThanWeek) {
+    if (!totalDays || totalDays <= 0) {
+        return includeLessThanWeek ? "Less than a week" : "";
+    }
+
+    var weeksTotal = Math.floor(totalDays / 7);
+    var years = Math.floor(weeksTotal / 52);
+    var weeks = weeksTotal - years * 52;
+
+    var parts = [];
+    if (years > 0) {
+        parts.push(years + " year" + (years === 1 ? "" : "s"));
+    }
+    if (weeks > 0) {
+        parts.push(weeks + " week" + (weeks === 1 ? "" : "s"));
+    }
+
+    if (!parts.length) {
+        return includeLessThanWeek ? "Less than a week" : "";
+    }
+
+    return parts.join(", ");
+}
+
+function calculateDuration(startDate, endDate) {
     if (!startDate || !endDate) {
-        return "";
+        return { text: "", totalDays: 0 };
     }
     if (endDate < startDate) {
         var temp = endDate;
@@ -54,49 +78,9 @@ function formatDuration(startDate, endDate) {
         startDate = temp;
     }
 
-    var startYear = startDate.getFullYear();
-    var startMonth = startDate.getMonth();
-    var startDay = startDate.getDate();
-
-    var endYear = endDate.getFullYear();
-    var endMonth = endDate.getMonth();
-    var endDay = endDate.getDate();
-
-    var years = endYear - startYear;
-    var months = endMonth - startMonth;
-    var days = endDay - startDay;
-
-    if (days < 0) {
-        var previousMonthDays = new Date(endYear, endMonth, 0).getDate();
-        days += previousMonthDays;
-        months -= 1;
-    }
-
-    if (months < 0) {
-        months += 12;
-        years -= 1;
-    }
-
-    var parts = [];
-    if (years > 0) {
-        parts.push(years + " year" + (years === 1 ? "" : "s"));
-    }
-    if (months > 0) {
-        parts.push(months + " month" + (months === 1 ? "" : "s"));
-    }
-    if (days > 0) {
-        parts.push(days + " day" + (days === 1 ? "" : "s"));
-    }
-
-    if (!parts.length) {
-        var totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
-        if (totalDays === 0) {
-            return "Less than a day";
-        }
-        return totalDays + " day" + (totalDays === 1 ? "" : "s");
-    }
-
-    return parts.join(", ");
+    var totalDays = Math.max(0, Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+    var text = formatDurationFromDays(totalDays, true);
+    return { text: text, totalDays: totalDays };
 }
 
 function buildNameMap(names) {
@@ -188,8 +172,8 @@ function buildLivedIndex(rawLived) {
         var periodText = (entry.period || entry.yearRange || "").trim();
         var startDate = null;
         var endDate = null;
-        var durationText = "";
 
+        var duration = { text: "", totalDays: 0 };
         if (periodText) {
             var arrowParts = periodText.split("→");
             if (arrowParts.length === 2) {
@@ -203,7 +187,7 @@ function buildLivedIndex(rawLived) {
                 }
             }
             if (startDate && endDate) {
-                durationText = formatDuration(startDate, endDate);
+                duration = calculateDuration(startDate, endDate);
             }
         }
 
@@ -225,8 +209,8 @@ function buildLivedIndex(rawLived) {
             yearSummary = periodText;
         }
         var timeline = yearSummary;
-        if (durationText) {
-            timeline = timeline ? (timeline + " (" + durationText + ")") : durationText;
+        if (duration.text) {
+            timeline = timeline ? (timeline + " (" + duration.text + ")") : duration.text;
         }
 
         livedDetails[normalized].push({
@@ -234,7 +218,8 @@ function buildLivedIndex(rawLived) {
             timeline: timeline,
             primaryCity: primaryCity,
             cities: cities,
-            country: (entry.country || "").trim()
+            country: (entry.country || "").trim(),
+            durationDays: duration.totalDays
         });
     });
 
@@ -375,7 +360,18 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         if (!entries || !entries.length) {
             return "";
         }
-        var html = '<span class="country-tooltip__section-title">Lived here</span>';
+        var totalDays = 0;
+        entries.forEach(function(entry) {
+            if (entry && entry.durationDays) {
+                totalDays += entry.durationDays;
+            }
+        });
+        var totalDurationText = formatDurationFromDays(totalDays, totalDays > 0);
+        var headline = "Lived here";
+        if (totalDurationText) {
+            headline += " — " + totalDurationText;
+        }
+        var html = '<span class="country-tooltip__section-title">' + escapeHtml(headline) + '</span>';
         entries.forEach(function(entry) {
             var city = entry.primaryCity || (entry.cities && entry.cities.length ? entry.cities[0] : "");
             var cityHtml = city ? '<strong class="country-tooltip__city">' + escapeHtml(city) + '</strong>' : "";

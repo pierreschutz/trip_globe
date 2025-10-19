@@ -1,10 +1,10 @@
 {
   "records": [
     {
-      "description": "SF Full-time",
+      "description": "Work Full-time",
       "country": "United States",
       "countryCode": "840",
-      "cities": ["San Francisco"],
+      "cities": ["San Francisco, CA"],
       "period": "September 26, 2022 → August 2, 2025"
     },
     {
@@ -18,70 +18,70 @@
       "description": "Tesla Internship",
       "country": "United States",
       "countryCode": "840",
-      "cities": ["Mountain View", "Palo Alto"],
+      "cities": ["Mountain View, CA", "Palo Alto, CA"],
       "period": "August 22, 2021 → March 13, 2022"
     },
     {
-      "description": "Grenoble Covid EPFL MA3 end",
+      "description": "EPFL MA3 end",
       "country": "France",
       "countryCode": "250",
       "cities": ["Saint-Ismier"],
       "period": "May 29, 2021 → August 21, 2021"
     },
     {
-      "description": "Houston Covid EPFL MA3",
+      "description": "Covid, EPFL MA3",
       "country": "United States",
       "countryCode": "840",
-      "cities": ["Houston"],
+      "cities": ["Houston, TX"],
       "period": "March 5, 2021 → May 28, 2021"
     },
     {
-      "description": "Grenoble Covid EPFL MA2, Amazon internship",
+      "description": "Covid, EPFL MA2, Amazon internship",
       "country": "France",
       "countryCode": "250",
       "cities": ["Saint-Ismier"],
       "period": "March 12, 2020 → March 5, 2021"
     },
     {
-      "description": "Lausanne EPFL MA1",
+      "description": "EPFL MA1",
       "country": "Switzerland",
       "countryCode": "756",
       "cities": ["Lausanne", "Saint-Sulpice"],
       "period": "September 20, 2019 → March 12, 2020"
     },
     {
-      "description": "NYC Inpher Internship",
+      "description": "Inpher Internship",
       "country": "United States",
       "countryCode": "840",
-      "cities": ["New York"],
+      "cities": ["New York, NY"],
       "period": "June 7, 2019 → September 10, 2019"
     },
     {
-      "description": "Hong Kong HKUST exchange program",
+      "description": "HKUST exchange program",
       "country": "China",
       "countryCode": "156",
       "cities": ["Hong Kong"],
       "period": "August 20, 2018 → June 5, 2019"
     },
     {
-      "description": "Lausanne EPFL Y1 & 2",
+      "description": "EPFL Y1 & 2",
       "country": "Switzerland",
       "countryCode": "756",
       "cities": ["Lausanne", "Saint-Sulpice"],
       "period": "September 20, 2016 → July 30, 2018"
     },
     {
-      "description": "Grenoble Growing Up",
+      "description": "Growing up at parents home",
       "country": "France",
       "countryCode": "250",
-      "cities": ["Bernin", "Grenoble", "Saint-Ismier"],
+      "cities": [ "Saint-Ismier", "Grenoble", "Bernin"],
       "period": "July 1, 2001 → July 31, 2016"
     },
     {
-      "description": "Virginia Birth",
+      "description": "Birth",
       "country": "United States",
       "countryCode": "840",
-      "cities": ["McLean"],
+      "cities": ["McLean, VA"],
       "period": "March 24, 1999 → June 30, 2001"
     }
   ]
