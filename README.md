@@ -23,6 +23,6 @@ RESOURCES:
 1. Install node: `brew install node`
 1. Install Yarn: `brew install yarn`
 2. Install project dependencies: `yarn install`.
-3. Launch the dev server: `make dev`. Override the port with `make dev PORT=3000` if necessary.
+3. Launch the dev server: `make dev`. Override the port with `make dev PORT=3000` if necessary. This uses `http-server` with caching disabled so changes to `index.js` reload immediately.
 4. Open http://localhost:8080 (or your chosen port) to view the globe.
 5. Without Node.js tooling, fall back to `make serve-python PORT=8080`, noting it lacks the CORS headers provided by the default target.

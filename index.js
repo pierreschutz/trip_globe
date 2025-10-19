@@ -44,17 +44,43 @@ d3.json("world.json", function(world) {
     let countries = topojson.feature(world, world.objects.countries).features;
     let color = d3.scale.category20c();
 
-    // Add colors to the countries
-    content.selectAll("path").data(countries)
-        .enter().append("path").attr(
-            {
-            "d": path,
-            "fill": function (d) {
-                return  color(d.id);
-            },
-            "stroke":"black",
-            "stoke-width": "10"
-        });
+    // Add colors to the countries, and animation
+    content.selectAll("path")
+    .data(countries)
+    .enter()
+    .append("path")
+    .attr("d", path)
+    .attr("fill", function (d) {
+        return color(d.id);
+    })
+    .attr("stroke", "#1a1a1a")
+    .attr("stroke-width", 0.6)
+    .on("mouseover", function (d) {
+        const selection = d3.select(this);
+        // interrupt running transitions before applying highlight
+        selection.interrupt();
+        this.parentNode.appendChild(this); // keep hovered country on top
+        const baseFill = color(d.id);
+        const highlightFill = d3.rgb(baseFill).brighter(1.1).toString();
+        selection
+            .transition()
+            .duration(200)
+            .ease("cubic-out")
+            .attr("fill", highlightFill)
+            .attr("stroke", "#ffffff")
+            .attr("stroke-width", 2.2);
+    })
+    .on("mouseout", function (d) {
+        const selection = d3.select(this);
+        selection.interrupt();
+        selection
+            .transition()
+            .duration(200)
+            .ease("cubic-out")
+            .attr("fill", color(d.id))
+            .attr("stroke", "#1a1a1a")
+            .attr("stroke-width", 0.6);
+    });
 
 
 
