@@ -92,8 +92,15 @@ head {
     font-size: 1.3em;
 }
 
-.visited-toggle {
+.globe-toggle-group {
     margin-top: 1.2rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.globe-toggle {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
@@ -103,13 +110,13 @@ head {
     user-select: none;
 }
 
-.visited-toggle__checkbox {
+.globe-toggle__checkbox {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-.visited-toggle__switch {
+.globe-toggle__switch {
     position: relative;
     width: 46px;
     height: 24px;
@@ -119,7 +126,11 @@ head {
     flex-shrink: 0;
 }
 
-.visited-toggle__knob {
+.globe-toggle__switch--accent {
+    background: rgba(255, 209, 112, 0.4);
+}
+
+.globe-toggle__knob {
     position: absolute;
     top: 3px;
     left: 4px;
@@ -131,19 +142,29 @@ head {
     transition: transform 0.2s ease;
 }
 
-.visited-toggle__checkbox:checked + .visited-toggle__switch {
+.globe-toggle__knob--accent {
+    background: #2c1a00;
+}
+
+.globe-toggle__checkbox:checked + .globe-toggle__switch {
     background: #67e89f;
 }
 
-.visited-toggle__checkbox:checked + .visited-toggle__switch .visited-toggle__knob {
+.globe-toggle__checkbox:checked + .globe-toggle__switch--accent {
+    background: #ffb703;
+}
+
+.globe-toggle__checkbox:checked + .globe-toggle__switch .globe-toggle__knob,
+.globe-toggle__checkbox:checked + .globe-toggle__switch--accent .globe-toggle__knob {
     transform: translateX(20px);
 }
 
-.visited-toggle__checkbox:focus + .visited-toggle__switch {
+.globe-toggle__checkbox:focus + .globe-toggle__switch,
+.globe-toggle__checkbox:focus + .globe-toggle__switch--accent {
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
 }
 
-.visited-toggle__label {
+.globe-toggle__label {
     letter-spacing: 0.03em;
 }
 
@@ -188,6 +209,29 @@ head {
     color: #ffe08a;
 }
 
+.country-tooltip__fact {
+    display: block;
+}
+
+.country-tooltip__city {
+    font-weight: bold;
+    color: #ffe08a;
+}
+
+.country-tooltip__section-title {
+    display: block;
+    margin-top: 0.6rem;
+    font-weight: bold;
+    color: #9cd8ff;
+}
+
+.country-tooltip__lived-entry {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.78rem;
+    opacity: 0.9;
+}
+
 /* 4. Footer */
 
 .footer {
@@ -202,6 +246,3 @@ head {
     bottom: 0;
     left: 0;
 }
-
-
-

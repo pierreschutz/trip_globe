@@ -13,6 +13,92 @@ function normalizeId(value) {
     return str.toUpperCase();
 }
 
+function escapeHtml(value) {
+    if (!value) {
+        return "";
+    }
+    return String(value).replace(/[&<>"']/g, function(match) {
+        switch (match) {
+            case '&': return '&amp;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '"': return '&quot;';
+            case "'": return '&#39;';
+            default: return match;
+        }
+    });
+}
+
+function parseDateFromString(value) {
+    if (!value) {
+        return null;
+    }
+    var trimmed = value.replace(/\s+/g, " ").trim();
+    if (!trimmed) {
+        return null;
+    }
+    var parsed = new Date(trimmed);
+    if (isNaN(parsed.getTime())) {
+        return null;
+    }
+    return parsed;
+}
+
+function formatDuration(startDate, endDate) {
+    if (!startDate || !endDate) {
+        return "";
+    }
+    if (endDate < startDate) {
+        var temp = endDate;
+        endDate = startDate;
+        startDate = temp;
+    }
+
+    var startYear = startDate.getFullYear();
+    var startMonth = startDate.getMonth();
+    var startDay = startDate.getDate();
+
+    var endYear = endDate.getFullYear();
+    var endMonth = endDate.getMonth();
+    var endDay = endDate.getDate();
+
+    var years = endYear - startYear;
+    var months = endMonth - startMonth;
+    var days = endDay - startDay;
+
+    if (days < 0) {
+        var previousMonthDays = new Date(endYear, endMonth, 0).getDate();
+        days += previousMonthDays;
+        months -= 1;
+    }
+
+    if (months < 0) {
+        months += 12;
+        years -= 1;
+    }
+
+    var parts = [];
+    if (years > 0) {
+        parts.push(years + " year" + (years === 1 ? "" : "s"));
+    }
+    if (months > 0) {
+        parts.push(months + " month" + (months === 1 ? "" : "s"));
+    }
+    if (days > 0) {
+        parts.push(days + " day" + (days === 1 ? "" : "s"));
+    }
+
+    if (!parts.length) {
+        var totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+        if (totalDays === 0) {
+            return "Less than a day";
+        }
+        return totalDays + " day" + (totalDays === 1 ? "" : "s");
+    }
+
+    return parts.join(", ");
+}
+
 function buildNameMap(names) {
     var map = {};
     names.forEach(function(d) {
@@ -63,6 +149,98 @@ function buildVisitedSet(rawVisited) {
     return set;
 }
 
+function buildLivedIndex(rawLived) {
+    var livedSet = d3.set();
+    var livedDetails = {};
+
+    if (!rawLived || !rawLived.records) {
+        return { set: livedSet, detail: livedDetails };
+    }
+
+    rawLived.records.forEach(function(entry) {
+        if (!entry) {
+            return;
+        }
+        var normalized = normalizeId(entry.countryCode || entry.country);
+        if (!normalized) {
+            return;
+        }
+
+        livedSet.add(normalized);
+
+        if (!livedDetails[normalized]) {
+            livedDetails[normalized] = [];
+        }
+
+        var cities = entry.cities || [];
+        if (typeof cities === "string") {
+            cities = cities.split(",").map(function(city) {
+                return city.trim();
+            }).filter(Boolean);
+        } else if (Array.isArray(cities)) {
+            cities = cities.map(function(city) {
+                return (city || "").toString().trim();
+            }).filter(Boolean);
+        } else {
+            cities = [];
+        }
+
+        var periodText = (entry.period || entry.yearRange || "").trim();
+        var startDate = null;
+        var endDate = null;
+        var durationText = "";
+
+        if (periodText) {
+            var arrowParts = periodText.split("→");
+            if (arrowParts.length === 2) {
+                startDate = parseDateFromString(arrowParts[0]);
+                endDate = parseDateFromString(arrowParts[1]);
+            } else {
+                var dashParts = periodText.split("-");
+                if (dashParts.length === 2) {
+                    startDate = parseDateFromString(dashParts[0]);
+                    endDate = parseDateFromString(dashParts[1]);
+                }
+            }
+            if (startDate && endDate) {
+                durationText = formatDuration(startDate, endDate);
+            }
+        }
+
+        var primaryCity = cities.length ? cities[0] : "";
+
+        var yearSummary = "";
+        if (startDate) {
+            yearSummary = String(startDate.getFullYear());
+        }
+        if (endDate) {
+            if (!yearSummary) {
+                yearSummary = String(endDate.getFullYear());
+            } else if (endDate.getFullYear() !== startDate.getFullYear()) {
+                yearSummary += " → " + endDate.getFullYear();
+            }
+        }
+        if (!yearSummary && periodText) {
+            // fallback to raw text when parsing fails
+            yearSummary = periodText;
+        }
+        var timeline = yearSummary;
+        if (durationText) {
+            timeline = timeline ? (timeline + " (" + durationText + ")") : durationText;
+        }
+
+        livedDetails[normalized].push({
+            description: (entry.description || "").trim(),
+            timeline: timeline,
+            primaryCity: primaryCity,
+            cities: cities,
+            country: (entry.country || "").trim()
+        });
+    });
+
+    return { set: livedSet, detail: livedDetails };
+}
+
 function loadJSON(path, callback) {
     d3.json(path + "?v=" + Date.now(), callback);
 }
@@ -101,14 +279,22 @@ loadJSON("world.json", function(error, world) {
                 }
 
                 var visitedSet = buildVisitedSet(visitedData);
-                renderGlobe(world, nameById, normalizedFacts, visitedSet);
+                loadJSON("lived.json", function(livedError, livedData) {
+                    if (livedError || !livedData) {
+                        console.warn("lived.json missing or invalid. Defaulting to empty list.", livedError);
+                        livedData = { records: [] };
+                    }
+
+                    var livedIndex = buildLivedIndex(livedData);
+                    renderGlobe(world, nameById, normalizedFacts, visitedSet, livedIndex);
+                });
             });
         });
     });
 });
 
 // Rendering -----------------------------------------------------------------
-function renderGlobe(world, nameById, facts, visitedSet) {
+function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     var viz = d3.select("#mapViz");
 
     var vizWidth = viz.node().getBoundingClientRect().width;
@@ -143,20 +329,36 @@ function renderGlobe(world, nameById, facts, visitedSet) {
     var countries = topojson.feature(world, world.objects.countries).features;
     var color = d3.scale.category20c();
 
+    visitedSet = visitedSet || d3.set();
+    livedIndex = livedIndex || { set: d3.set(), detail: {} };
+
     var visitedToggle = d3.select("#visitedToggle");
+    var livedToggle = d3.select("#livedToggle");
     var showVisited = !visitedToggle.empty() && visitedToggle.property("checked");
+    var showLived = !livedToggle.empty() && livedToggle.property("checked");
     var unvisitedFill = "#3f4453";
+    var livedHighlightFill = "#ffb703";
 
     var tooltip = d3.select("body")
         .append("div")
         .attr("class", "country-tooltip")
         .style("opacity", 0);
 
+    var livedSet = livedIndex.set || d3.set();
+    var livedDetails = livedIndex.detail || {};
+
     function isVisited(normalizedId) {
-        if (!normalizedId || !visitedSet) {
+        if (!normalizedId) {
             return false;
         }
         return visitedSet.has(normalizedId);
+    }
+
+    function isLived(normalizedId) {
+        if (!normalizedId) {
+            return false;
+        }
+        return livedSet.has(normalizedId);
     }
 
     function getCountryInfo(id) {
@@ -164,21 +366,50 @@ function renderGlobe(world, nameById, facts, visitedSet) {
         var fallbackName = normalizedId && nameById[normalizedId] ? nameById[normalizedId] : ("Country " + (normalizedId || id));
         var info = (normalizedId && facts[normalizedId]) || {};
         var name = info.name || fallbackName;
-        var fact = info.fact || name;
-        return { name: name, fact: fact };
+        var fact = info.fact || "";
+        var lived = normalizedId && livedDetails[normalizedId] ? livedDetails[normalizedId] : [];
+        return { name: name, fact: fact, lived: lived };
+    }
+
+    function buildLivedMarkup(entries) {
+        if (!entries || !entries.length) {
+            return "";
+        }
+        var html = '<span class="country-tooltip__section-title">Lived here</span>';
+        entries.forEach(function(entry) {
+            var city = entry.primaryCity || (entry.cities && entry.cities.length ? entry.cities[0] : "");
+            var cityHtml = city ? '<strong class="country-tooltip__city">' + escapeHtml(city) + '</strong>' : "";
+            var timelineHtml = entry.timeline ? escapeHtml(entry.timeline) : "";
+
+            var detailParts = [];
+            if (cityHtml) {
+                detailParts.push(cityHtml);
+            }
+            if (timelineHtml) {
+                detailParts.push(timelineHtml);
+            }
+
+            var detailHtml = detailParts.join(" · ");
+            var descriptionHtml = entry.description ? escapeHtml(entry.description) : "";
+            var combined = descriptionHtml;
+            if (detailHtml) {
+                combined = combined ? (combined + " — " + detailHtml) : detailHtml;
+            }
+            if (!combined) {
+                return;
+            }
+            html += '<span class="country-tooltip__lived-entry">' + combined + '</span>';
+        });
+        return html;
     }
 
     function showTooltip(datum) {
         var info = getCountryInfo(datum.normalizedId || datum.id);
-        tooltip
-            .style("opacity", 1)
-            .html(
-                '<span class="country-tooltip__title">' +
-                info.name +
-                "</span><span>" +
-                info.fact +
-                "</span>"
-            );
+        var showFact = !showVisited && !showLived && info.fact && info.fact !== info.name;
+        var fact = showFact ? '<span class="country-tooltip__fact">' + escapeHtml(info.fact) + '</span>' : '';
+        var livedHtml = showLived ? buildLivedMarkup(info.lived) : '';
+        var html = '<span class="country-tooltip__title">' + escapeHtml(info.name) + '</span>' + fact + livedHtml;
+        tooltip.style("opacity", 1).html(html);
     }
 
     function moveTooltip() {
@@ -195,9 +426,33 @@ function renderGlobe(world, nameById, facts, visitedSet) {
     }
 
     function getCurrentFill(datum) {
-        if (showVisited && !isVisited(datum.normalizedId)) {
+        var visited = isVisited(datum.normalizedId);
+        var lived = isLived(datum.normalizedId);
+
+        if (showVisited && showLived) {
+            if (lived) {
+                return livedHighlightFill;
+            }
+            if (visited) {
+                return datum.baseFill;
+            }
             return unvisitedFill;
         }
+
+        if (showLived) {
+            if (lived) {
+                return livedHighlightFill;
+            }
+            return unvisitedFill;
+        }
+
+        if (showVisited) {
+            if (visited) {
+                return datum.baseFill;
+            }
+            return unvisitedFill;
+        }
+
         return datum.baseFill;
     }
 
@@ -220,6 +475,15 @@ function renderGlobe(world, nameById, facts, visitedSet) {
     if (!visitedToggle.empty()) {
         visitedToggle.on("change", function() {
             showVisited = this.checked;
+            hideTooltip();
+            updateCountryFills(180);
+        });
+    }
+
+    if (!livedToggle.empty()) {
+        livedToggle.on("change", function() {
+            showLived = this.checked;
+            hideTooltip();
             updateCountryFills(180);
         });
     }
