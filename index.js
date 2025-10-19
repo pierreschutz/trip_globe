@@ -271,12 +271,26 @@ loadJSON("world.json", function(error, world) {
                     }
 
                     var livedIndex = buildLivedIndex(livedData);
-                    renderGlobe(world, nameById, normalizedFacts, visitedSet, livedIndex);
+                    initializeResponsiveGlobe(world, nameById, normalizedFacts, visitedSet, livedIndex);
                 });
             });
         });
     });
 });
+
+function initializeResponsiveGlobe(world, nameById, facts, visitedSet, livedIndex) {
+    function draw() {
+        var viz = d3.select("#mapViz");
+        viz.selectAll("*").remove();
+        renderGlobe(world, nameById, facts, visitedSet, livedIndex);
+    }
+
+    draw();
+
+    d3.select(window).on("resize.globe", function() {
+        draw();
+    });
+}
 
 // Rendering -----------------------------------------------------------------
 function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
