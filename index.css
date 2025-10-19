@@ -227,6 +227,7 @@ head {
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
+    padding: 16px;
     pointer-events: none;
 }
 
@@ -239,14 +240,12 @@ head {
 
 .appbar-section--left {
     align-items: flex-start;
-    margin-left: 8px;
 }
 
 .appbar-section--right {
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
-    margin-right: 8px;
 }
 
 .appbar-link {
@@ -314,8 +313,8 @@ head {
 
 #mapViz svg {
     display: block;
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
 }
 
 .viz-overlay {
@@ -331,7 +330,6 @@ head {
     top: 0;
     width: 100%;
     max-width: 100vw;
-    padding: 12px 24px 0 16px;
     justify-content: space-between;
     align-items: flex-start;
 }
@@ -340,9 +338,10 @@ head {
     bottom: 16px;
     width: 100%;
     max-width: 100vw;
-    padding: 0 16px;
+    padding: 0 calc(16px + env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));
     justify-content: flex-start;
     align-items: flex-end;
+    pointer-events: none;
 }
 
 .country-tooltip {
@@ -396,4 +395,5 @@ head {
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.75);
     padding-left: 0;
+    pointer-events: auto;
 }
