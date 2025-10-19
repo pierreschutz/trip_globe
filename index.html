@@ -34,10 +34,14 @@
 
     </div>
     <div class="title">
-        <p class="description">Interactive and colorful world map visualization.
-            Click on the globe and drag to make it move. <br/>
-            (This is still a work in progress. Watch out for new stuff ;))
-        </p>
+        <p class="description">Click on the globe and drag to make it move.</p>
+        <label class="visited-toggle">
+            <input type="checkbox" id="visitedToggle" class="visited-toggle__checkbox">
+            <span class="visited-toggle__switch" aria-hidden="true">
+                <span class="visited-toggle__knob"></span>
+            </span>
+            <span class="visited-toggle__label">Visited countries</span>
+        </label>
 
     </div>
     <div class="viz">
@@ -47,7 +51,7 @@
 </div>
 
 <div class="footer">
-    <span class="footer-text">&copy; Pierre Schutz 2023</span>
+    <span class="footer-text">&copy; Pierre Schutz 2025</span>
 </div>
 
 <script type="text/javascript" src="https://d3js.org/topojson.v1.min.js"></script>

@@ -4,4 +4,7 @@ PORT ?= 8080
 .PHONY: dev serve-python
 
 dev:
-	npx http-server . --port $(PORT) --cors
+	npx http-server . --port $(PORT) --cors --cache -1
+
+serve-python:
+	python3 -m http.server $(PORT)
