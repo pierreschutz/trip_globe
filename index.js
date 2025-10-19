@@ -1,24 +1,40 @@
 // Url: https://unpkg.com/world-atlas@1.1.4/world/50m.json
-d3.json("world.json", function(error, world) {
-    if (error) {
-        console.error("Unable to load world.json", error);
+d3.json("world.json", function(world) {
+    if (!world) {
+        console.error("Unable to load world.json");
         return;
     }
 
-    d3.tsv("country-names.tsv", function(namesError, names) {
-        if (namesError) {
-            console.error("Unable to load country-names.tsv", namesError);
+    d3.tsv("country-names.tsv", function(names) {
+        if (!names) {
+            console.error("Unable to load country-names.tsv");
             return;
         }
 
         const nameById = {};
+        function storeName(key, value) {
+            if (key) {
+                nameById[key] = value;
+            }
+        }
+
         names.forEach(function(d) {
-            nameById[d.id] = d.name;
+            const name = d.name;
+            const isoNumeric = d.iso_n3;
+            const isoAlpha = d.iso_a3;
+            const admCode = d.adm0_a3;
+            if (isoNumeric) {
+                const padded = ("000" + isoNumeric).slice(-3);
+                storeName(isoNumeric, name);
+                storeName(padded, name);
+            }
+            storeName(isoAlpha, name);
+            storeName(admCode, name);
         });
 
-        d3.json("country-facts.json", function(factsError, facts) {
-            if (factsError) {
-                console.warn("country-facts.json missing or invalid. Falling back to defaults.", factsError);
+        d3.json("country-facts.json", function(facts) {
+            if (!facts) {
+                console.warn("country-facts.json missing or invalid. Falling back to defaults.");
                 facts = {};
             }
 
