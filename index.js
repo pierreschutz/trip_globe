@@ -317,10 +317,10 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     visitedSet = visitedSet || d3.set();
     livedIndex = livedIndex || { set: d3.set(), detail: {} };
 
-    var visitedToggle = d3.select("#visitedToggle");
-    var livedToggle = d3.select("#livedToggle");
-    var showVisited = !visitedToggle.empty() && visitedToggle.property("checked");
-    var showLived = !livedToggle.empty() && livedToggle.property("checked");
+    var navItems = d3.selectAll(".sidebar-nav__item");
+    var currentView = "explorer";
+    var showVisited = false;
+    var showLived = false;
     var unvisitedFill = "#3f4453";
     var livedHighlightFill = "#ffb703";
 
@@ -329,8 +329,28 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         .attr("class", "country-tooltip")
         .style("opacity", 0);
 
+    if (navItems[0] && navItems[0].length) {
+        var preset = navItems.filter(".sidebar-nav__item--active");
+        if (preset[0] && preset[0][0]) {
+            var presetView = d3.select(preset[0][0]).attr("data-view");
+            if (presetView) {
+                currentView = presetView;
+                showVisited = (currentView === "visited" || currentView === "lived");
+                showLived = (currentView === "lived");
+            }
+        }
+
+        navItems.classed("sidebar-nav__item--active", function() {
+            return d3.select(this).attr("data-view") === currentView;
+        }).attr("aria-pressed", function() {
+            return d3.select(this).attr("data-view") === currentView ? "true" : "false";
+        });
+    }
+    d3.select("body").attr("data-view", currentView);
+
     var livedSet = livedIndex.set || d3.set();
     var livedDetails = livedIndex.detail || {};
+    var countryPaths;
 
     function isVisited(normalizedId) {
         if (!normalizedId) {
@@ -429,9 +449,6 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
             if (lived) {
                 return livedHighlightFill;
             }
-            if (visited) {
-                return datum.baseFill;
-            }
             return unvisitedFill;
         }
 
@@ -454,6 +471,9 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
 
     function updateCountryFills(duration) {
         duration = duration || 0;
+        if (!countryPaths) {
+            return;
+        }
         countryPaths.each(function(d) {
             var selection = d3.select(this);
             selection.interrupt();
@@ -468,23 +488,42 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         });
     }
 
-    if (!visitedToggle.empty()) {
-        visitedToggle.on("change", function() {
-            showVisited = this.checked;
-            hideTooltip();
-            updateCountryFills(180);
+    function updateNavState(view) {
+        if (navItems[0] && navItems[0].length) {
+            navItems
+                .classed("sidebar-nav__item--active", function() {
+                    return d3.select(this).attr("data-view") === view;
+                })
+                .attr("aria-pressed", function() {
+                    return d3.select(this).attr("data-view") === view ? "true" : "false";
+                });
+        }
+        d3.select("body").attr("data-view", view);
+    }
+
+    function applyView(view, animate) {
+        if (!view) {
+            return;
+        }
+        currentView = view;
+        showVisited = (view === "visited" || view === "lived");
+        showLived = (view === "lived");
+        updateNavState(view);
+        updateCountryFills(animate ? 200 : 0);
+        hideTooltip();
+    }
+
+    if (navItems[0] && navItems[0].length) {
+        navItems.on("click", function() {
+            var view = d3.select(this).attr("data-view");
+            applyView(view, true);
+            if (window.__sidebarControl && typeof window.__sidebarControl.setOpen === "function") {
+                window.__sidebarControl.setOpen(false);
+            }
         });
     }
 
-    if (!livedToggle.empty()) {
-        livedToggle.on("change", function() {
-            showLived = this.checked;
-            hideTooltip();
-            updateCountryFills(180);
-        });
-    }
-
-    var countryPaths = content.selectAll("path")
+    countryPaths = content.selectAll("path")
         .data(countries)
         .enter()
         .append("path")
@@ -530,6 +569,8 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
 
             hideTooltip();
         });
+
+    applyView(currentView, false);
 
     // Interaction -----------------------------------------------------------
     var degreesPerPixel = 360 / (2 * Math.PI * radius);
@@ -672,3 +713,42 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         })
     );
 }
+
+(function initializeSidebar() {
+    var body = d3.select("body");
+    var sidebar = d3.select("#sidebar");
+    var overlay = d3.select("#sidebarOverlay");
+    var toggle = d3.select("#sidebarToggle");
+
+    if (sidebar.empty() || overlay.empty() || toggle.empty()) {
+        return;
+    }
+
+    function setOpen(isOpen) {
+        body.classed("sidebar-open", isOpen);
+        sidebar.classed("sidebar--open", isOpen).attr("aria-hidden", isOpen ? "false" : "true");
+        overlay.classed("sidebar-overlay--visible", isOpen).attr("aria-hidden", isOpen ? "false" : "true");
+        toggle
+            .attr("aria-expanded", isOpen ? "true" : "false")
+            .attr("aria-label", isOpen ? "Close sidebar" : "Open sidebar");
+    }
+
+    toggle.on("click", function() {
+        var expanded = toggle.attr("aria-expanded") === "true";
+        setOpen(!expanded);
+    });
+
+    overlay.on("click", function() {
+        setOpen(false);
+    });
+
+    d3.select(window).on("keydown.sidebar", function() {
+        if (d3.event && d3.event.key === "Escape") {
+            setOpen(false);
+        }
+    });
+
+    window.__sidebarControl = {
+        setOpen: setOpen
+    };
+})();
