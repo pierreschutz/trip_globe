@@ -285,12 +285,13 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     var vizWidth = viz.node().getBoundingClientRect().width;
     var vizHeight = viz.node().getBoundingClientRect().height;
 
-    var svgWidth = vizWidth * 0.98;
-    var svgHeight = vizHeight * 0.98;
+    var size = Math.min(vizWidth, vizHeight);
+    var svgWidth = size;
+    var svgHeight = size;
 
-    var scale = 800;
+    var scale = size;
     var mid = scale / 2;
-    var radius = scale / 3;
+    var radius = scale / 2.1;
 
     var svg = viz
         .append("svg")
@@ -298,6 +299,13 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         .attr("height", svgHeight)
         .attr("viewBox", "0 0 " + scale + " " + scale)
         .attr("preserveAspectRatio", "xMidYMid");
+
+    svg
+        .style("position", "absolute")
+        .style("left", ((vizWidth - size) / 2) + "px")
+        .style("top", ((vizHeight - size) / 2) + "px")
+        .style("width", size + "px")
+        .style("height", size + "px");
 
     var content = svg.append("g");
 
