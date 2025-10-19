@@ -86,16 +86,21 @@ d3.json("world.json", function(world) {
 
 
     // Enable the user to rotate the map
+    const degreesPerPixel = 360 / (2 * Math.PI * radius);
     content.call(d3.behavior.drag()
-        .origin(function() {
-            // Save the initial rotation position
-            const r1 = projection.rotate();
-            return {x: r1[0], y: -r1[1]};
+        .on("dragstart", function () {
+            if (d3.event.sourceEvent) {
+                d3.event.sourceEvent.preventDefault();
+            }
         })
         .on("drag", function() {
-            // Rotate the globe
-            const r2 = projection.rotate();
-            projection.rotate([d3.event.x, -d3.event.y, 0]); //r2[2]]); Only two axis rotation at the same time.
+            const rotate = projection.rotate();
+            const newRotate = [
+                rotate[0] + d3.event.dx * degreesPerPixel,
+                rotate[1] - d3.event.dy * degreesPerPixel,
+                rotate[2]
+            ];
+            projection.rotate(newRotate);
             // Update paths with rotation
             content.selectAll("path").attr("d", path);
         }));
