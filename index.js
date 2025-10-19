@@ -88,23 +88,131 @@ d3.json("world.json", function(world) {
     // Enable the user to rotate the map
     const degreesPerPixel = 360 / (2 * Math.PI * radius);
     const maxLatRotation = 50;
+    let inertia = { vx: 0, vy: 0 };
+    let lastDragTimestamp = null;
+    let inertiaActive = false;
+    let lastDragDelta = { lon: 0, lat: 0, dt: 0 };
+
+    function clampLatitude(value) {
+        return Math.max(-maxLatRotation, Math.min(maxLatRotation, value));
+    }
+
+    function stopInertia() {
+        inertiaActive = false;
+    }
+
+    function updatePaths() {
+        content.selectAll("path").attr("d", path);
+    }
+
     content.call(d3.behavior.drag()
         .on("dragstart", function () {
             if (d3.event.sourceEvent) {
                 d3.event.sourceEvent.preventDefault();
             }
+            stopInertia();
+            inertia.vx = 0;
+            inertia.vy = 0;
+            lastDragTimestamp = Date.now();
+            lastDragDelta = { lon: 0, lat: 0, dt: 0 };
         })
         .on("drag", function() {
+            const now = Date.now();
+            const dt = lastDragTimestamp ? (now - lastDragTimestamp) : 0;
+            lastDragTimestamp = now;
+
+            const deltaLon = d3.event.dx * degreesPerPixel;
+            const deltaLat = d3.event.dy * degreesPerPixel;
+
             const rotate = projection.rotate();
-            const newRotate = [
-                rotate[0] + d3.event.dx * degreesPerPixel,
-                rotate[1] - d3.event.dy * degreesPerPixel,
-                rotate[2]
-            ];
-            newRotate[1] = Math.max(-maxLatRotation, Math.min(maxLatRotation, newRotate[1]));
-            projection.rotate(newRotate);
-            // Update paths with rotation
-            content.selectAll("path").attr("d", path);
+            const newLon = rotate[0] + deltaLon;
+            const newLat = clampLatitude(rotate[1] - deltaLat);
+
+            projection.rotate([newLon, newLat, rotate[2]]);
+            updatePaths();
+
+            if (dt > 0) {
+                const actualLonChange = newLon - rotate[0];
+                const actualLatChange = newLat - rotate[1];
+                if (dt <= 120) {
+                    lastDragDelta = {
+                        lon: actualLonChange,
+                        lat: actualLatChange,
+                        dt: dt
+                    };
+                } else {
+                    lastDragDelta = { lon: 0, lat: 0, dt: 0 };
+                }
+            }
+        })
+        .on("dragend", function () {
+            lastDragTimestamp = null;
+            if (!lastDragDelta.dt) {
+                inertia.vx = 0;
+                inertia.vy = 0;
+                return;
+            }
+
+            const vx = lastDragDelta.lon / lastDragDelta.dt;
+            const vy = lastDragDelta.lat / lastDragDelta.dt;
+            const speed = Math.sqrt(vx * vx + vy * vy);
+            const minSpeed = 0.002;
+
+            if (speed < minSpeed) {
+                inertia.vx = 0;
+                inertia.vy = 0;
+                lastDragDelta = { lon: 0, lat: 0, dt: 0 };
+                return;
+            }
+
+            inertia.vx = vx;
+            inertia.vy = vy;
+            lastDragDelta = { lon: 0, lat: 0, dt: 0 };
+
+            inertiaActive = true;
+            let previous = Date.now();
+
+            d3.timer(function () {
+                if (!inertiaActive) {
+                    return true;
+                }
+
+                const now = Date.now();
+                let dt = now - previous;
+                previous = now;
+
+                if (dt <= 0) {
+                    return;
+                }
+
+                if (dt > 60) {
+                    dt = 60;
+                }
+
+                const rotate = projection.rotate();
+                const newLon = rotate[0] + inertia.vx * dt;
+                const currentLat = rotate[1] + inertia.vy * dt;
+                const newLat = clampLatitude(currentLat);
+
+                projection.rotate([newLon, newLat, rotate[2]]);
+                updatePaths();
+
+                const damping = Math.exp(-dt / 200);
+                inertia.vx *= damping;
+                inertia.vy *= damping;
+
+                if (newLat === maxLatRotation || newLat === -maxLatRotation) {
+                    inertia.vy = 0;
+                }
+
+                const nextSpeed = Math.sqrt(inertia.vx * inertia.vx + inertia.vy * inertia.vy);
+                if (nextSpeed < 0.0004) {
+                    stopInertia();
+                    inertia.vx = 0;
+                    inertia.vy = 0;
+                    return true;
+                }
+            });
         }));
 
 
