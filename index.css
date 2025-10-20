@@ -240,12 +240,14 @@ head {
 
 .appbar-section--left {
     align-items: flex-start;
+    gap: 8px;
 }
 
 .appbar-section--right {
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
+    margin-right: env(safe-area-inset-right, 0px);
 }
 
 .appbar-link {
@@ -294,6 +296,19 @@ head {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.view-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: rgba(2, 6, 14, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    align-self: center;
+    pointer-events: auto;
 }
 
 /* 3. Visualization*/

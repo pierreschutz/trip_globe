@@ -279,17 +279,66 @@ loadJSON("world.json", function(error, world) {
 });
 
 function initializeResponsiveGlobe(world, nameById, facts, visitedSet, livedIndex) {
-    function draw() {
-        var viz = d3.select("#mapViz");
-        viz.selectAll("*").remove();
-        renderGlobe(world, nameById, facts, visitedSet, livedIndex);
+    renderGlobe(world, nameById, facts, visitedSet, livedIndex);
+    resizeGlobe();
+    d3.select(window).on("resize.globe", resizeGlobe);
+}
+
+
+function resizeGlobe() {
+    var viz = d3.select("#mapViz");
+    var svg = viz.select("svg");
+    if (svg.empty()) {
+        return;
+    }
+    var state = svg.node().__globeState;
+    if (!state) {
+        return;
     }
 
-    draw();
+    var bounds = viz.node().getBoundingClientRect();
+    var vizWidth = bounds.width;
+    var vizHeight = bounds.height;
+    var size = Math.min(vizWidth, vizHeight);
+    if (!size || !isFinite(size)) {
+        size = Math.max(vizWidth, vizHeight) || state.size || 800;
+    }
 
-    d3.select(window).on("resize.globe", function() {
-        draw();
-    });
+    var scale = size;
+    var mid = scale / 2;
+    var radius = scale / 2.1;
+
+    svg
+        .attr("width", size)
+        .attr("height", size)
+        .attr("viewBox", "0 0 " + scale + " " + scale)
+        .style("left", ((vizWidth - size) / 2) + "px")
+        .style("top", ((vizHeight - size) / 2) + "px")
+        .style("width", size + "px")
+        .style("height", size + "px");
+
+    if (state.seaCircle) {
+        state.seaCircle
+            .attr("cx", mid)
+            .attr("cy", mid)
+            .attr("r", radius);
+    }
+
+    if (state.projection) {
+        state.projection.scale(radius).translate([mid, mid]);
+    }
+
+    if (state.updatePaths) {
+        state.updatePaths();
+    }
+    if (state.updateCountryFills) {
+        state.updateCountryFills(0);
+    }
+
+    state.size = size;
+    state.scale = scale;
+    state.mid = mid;
+    state.radius = radius;
 }
 
 // Rendering -----------------------------------------------------------------
@@ -300,17 +349,26 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     var vizHeight = viz.node().getBoundingClientRect().height;
 
     var size = Math.min(vizWidth, vizHeight);
-    var svgWidth = size;
-    var svgHeight = size;
+    if (!size || !isFinite(size)) {
+        size = Math.max(vizWidth, vizHeight) || 800;
+    }
 
     var scale = size;
     var mid = scale / 2;
     var radius = scale / 2.1;
 
+    var state = {
+        viz: viz,
+        size: size,
+        scale: scale,
+        mid: mid,
+        radius: radius
+    };
+
     var svg = viz
         .append("svg")
-        .attr("width", svgWidth)
-        .attr("height", svgHeight)
+        .attr("width", size)
+        .attr("height", size)
         .attr("viewBox", "0 0 " + scale + " " + scale)
         .attr("preserveAspectRatio", "xMidYMid");
 
@@ -320,15 +378,18 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         .style("top", ((vizHeight - size) / 2) + "px")
         .style("width", size + "px")
         .style("height", size + "px");
+    state.svg = svg;
 
     var content = svg.append("g");
+    state.content = content;
 
     // Add blue background for the sea
-    content.append("circle")
+    var seaCircle = content.append("circle")
         .attr("cx", mid)
         .attr("cy", mid)
         .attr("r", radius)
         .attr("fill", "lightBlue");
+    state.seaCircle = seaCircle;
 
     // Build the map projection
     var projection = d3.geo.orthographic().scale(radius).translate([mid, mid]).clipAngle(90);
@@ -336,13 +397,25 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     var countries = topojson.feature(world, world.objects.countries).features;
     var color = d3.scale.category20c();
 
+    state.projection = projection;
+    state.path = path;
+    state.countries = countries;
+    state.color = color;
+
     visitedSet = visitedSet || d3.set();
     livedIndex = livedIndex || { set: d3.set(), detail: {} };
+    state.visitedSet = visitedSet;
 
     var navItems = d3.selectAll(".sidebar-nav__item");
+    state.navItems = navItems;
+    var viewLabel = d3.select("[data-view-label]");
+    state.viewLabel = viewLabel;
     var currentView = "explorer";
     var showVisited = false;
     var showLived = false;
+    state.currentView = currentView;
+    state.showVisited = showVisited;
+    state.showLived = showLived;
     var unvisitedFill = "#3f4453";
     var livedHighlightFill = "#ffb703";
 
@@ -350,6 +423,7 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         .append("div")
         .attr("class", "country-tooltip")
         .style("opacity", 0);
+    state.tooltip = tooltip;
 
     if (navItems[0] && navItems[0].length) {
         var preset = navItems.filter(".sidebar-nav__item--active");
@@ -373,6 +447,8 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     var livedSet = livedIndex.set || d3.set();
     var livedDetails = livedIndex.detail || {};
     var countryPaths;
+    state.livedSet = livedSet;
+    state.livedDetails = livedDetails;
 
     function isVisited(normalizedId) {
         if (!normalizedId) {
@@ -462,6 +538,8 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     function hideTooltip() {
         tooltip.style("opacity", 0);
     }
+    state.showTooltip = showTooltip;
+    state.hideTooltip = hideTooltip;
 
     function getCurrentFill(datum) {
         var visited = isVisited(datum.normalizedId);
@@ -509,6 +587,15 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
             }
         });
     }
+    state.updateCountryFills = updateCountryFills;
+
+    function updateViewLabel() {
+        if (!viewLabel.empty()) {
+            var active = navItems.filter(".sidebar-nav__item--active");
+            var text = active.empty() ? "" : active.text();
+            viewLabel.text(text);
+        }
+    }
 
     function updateNavState(view) {
         if (navItems[0] && navItems[0].length) {
@@ -521,7 +608,9 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
                 });
         }
         d3.select("body").attr("data-view", view);
+        updateViewLabel();
     }
+    state.updateNavState = updateNavState;
 
     function applyView(view, animate) {
         if (!view) {
@@ -530,10 +619,14 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         currentView = view;
         showVisited = (view === "visited" || view === "lived");
         showLived = (view === "lived");
+        state.currentView = currentView;
+        state.showVisited = showVisited;
+        state.showLived = showLived;
         updateNavState(view);
         updateCountryFills(animate ? 200 : 0);
         hideTooltip();
     }
+    state.applyView = applyView;
 
     if (navItems[0] && navItems[0].length) {
         navItems.on("click", function() {
@@ -591,6 +684,8 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
 
             hideTooltip();
         });
+    state.countryPaths = countryPaths;
+    state.getCurrentFill = getCurrentFill;
 
     applyView(currentView, false);
 
@@ -613,6 +708,7 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     function updatePaths() {
         countryPaths.attr("d", path);
     }
+    state.updatePaths = updatePaths;
 
     content.call(d3.behavior.drag()
         .on("dragstart", function() {
@@ -734,6 +830,20 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
             svg.attr("transform", "scale(" + zoomScale + ")");
         })
     );
+
+    state.svg = svg;
+    state.content = content;
+    state.seaCircle = seaCircle;
+    state.countryPaths = countryPaths;
+    state.updatePaths = updatePaths;
+    state.updateCountryFills = updateCountryFills;
+    state.showTooltip = showTooltip;
+    state.hideTooltip = hideTooltip;
+    state.applyView = applyView;
+    state.showVisited = showVisited;
+    state.showLived = showLived;
+    state.currentView = currentView;
+    svg.node().__globeState = state;
 }
 
 (function initializeSidebar() {
