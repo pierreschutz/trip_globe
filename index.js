@@ -279,10 +279,40 @@ loadJSON("world.json", function(error, world) {
 });
 
 function initializeResponsiveGlobe(world, nameById, facts, visitedSet, livedIndex) {
-    renderGlobe(world, nameById, facts, visitedSet, livedIndex);
+    var initialView = parseViewFromUrl();
+    renderGlobe(world, nameById, facts, visitedSet, livedIndex, initialView);
     resizeGlobe();
     d3.select(window).on("resize.globe", resizeGlobe);
 }
+
+function parseViewFromUrl() {
+    var hash = (window.location && window.location.hash) ? window.location.hash : "";
+    hash = hash.replace(/^#/, "");
+    if (!hash) {
+        return "explorer";
+    }
+    var segment = hash.toLowerCase();
+    if (segment === "visited" || segment === "lived" || segment === "explorer") {
+        return segment;
+    }
+    return "explorer";
+}
+
+function updateUrlForView(view) {
+    if (!window.location) {
+        return;
+    }
+    var normalized = view || "explorer";
+    var newHash = "#" + normalized;
+    if (window.location.hash !== newHash) {
+        if (window.history && window.history.replaceState) {
+            window.history.replaceState({ view: normalized }, "", newHash);
+        } else {
+            window.location.hash = normalized;
+        }
+    }
+}
+
 
 
 function resizeGlobe() {
@@ -342,7 +372,7 @@ function resizeGlobe() {
 }
 
 // Rendering -----------------------------------------------------------------
-function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
+function renderGlobe(world, nameById, facts, visitedSet, livedIndex, initialView) {
     var viz = d3.select("#mapViz");
 
     var vizWidth = viz.node().getBoundingClientRect().width;
@@ -410,7 +440,7 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     state.navItems = navItems;
     var viewLabel = d3.select("[data-view-label]");
     state.viewLabel = viewLabel;
-    var currentView = "explorer";
+    var currentView = initialView || state.currentView || "explorer";
     var showVisited = false;
     var showLived = false;
     state.currentView = currentView;
@@ -626,12 +656,15 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
         updateCountryFills(animate ? 200 : 0);
         hideTooltip();
     }
-    state.applyView = applyView;
+    state.applyView = function(view, animate) {
+        applyView(view, animate);
+    };
 
     if (navItems[0] && navItems[0].length) {
         navItems.on("click", function() {
             var view = d3.select(this).attr("data-view");
-            applyView(view, true);
+            state.applyView(view, true);
+            updateUrlForView(view);
             if (window.__sidebarControl && typeof window.__sidebarControl.setOpen === "function") {
                 window.__sidebarControl.setOpen(false);
             }
@@ -687,7 +720,8 @@ function renderGlobe(world, nameById, facts, visitedSet, livedIndex) {
     state.countryPaths = countryPaths;
     state.getCurrentFill = getCurrentFill;
 
-    applyView(currentView, false);
+    state.applyView(state.currentView, false);
+    updateUrlForView(state.currentView);
 
     // Interaction -----------------------------------------------------------
     var degreesPerPixel = 360 / (2 * Math.PI * radius);
