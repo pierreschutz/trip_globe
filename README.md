@@ -19,6 +19,17 @@ RESOURCES:
 
 - Idea of more advanced app: https://pintraveler.net/
 
+## Deployment (Firebase Hosting)
+
+- Production is hosted on Firebase Hosting at https://globe.pierreschutz.com.
+- CI deploys run via GitHub Actions. Ensure `FIREBASE_SERVICE_ACCOUNT_TRIP_GLOBE_VIZ` is set in repo secrets.
+
+### Preview a local build
+
+1. Make your local changes.
+2. Deploy a preview channel: `firebase hosting:channel:deploy dev`
+3. Firebase will output a preview URL you can share.
+
 ## Local Development
 1. Install node: `brew install node`
 1. Install Yarn: `brew install yarn`
