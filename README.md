@@ -19,6 +19,11 @@ RESOURCES:
 
 - Idea of more advanced app: https://pintraveler.net/
 
+## Deployment
+
+- Production is hosted via GitHub Pages from the `main` branch at https://globe.pierreschutz.com.
+- Dev is local only; use `make dev` to run the site locally.
+
 ## Local Development
 1. Install node: `brew install node`
 1. Install Yarn: `brew install yarn`
