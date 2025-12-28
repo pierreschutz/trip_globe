@@ -19,6 +19,17 @@ RESOURCES:
 
 - Idea of more advanced app: https://pintraveler.net/
 
+## Deployment (Firebase Hosting)
+
+- Production is hosted on Firebase Hosting at https://globe.pierreschutz.com.
+- CI deploys run via GitHub Actions. Ensure `FIREBASE_SERVICE_ACCOUNT_TRIP_GLOBE_VIZ` is set in repo secrets.
+
+### Preview a local build
+
+1. Make your local changes.
+2. Deploy a preview channel: `firebase hosting:channel:deploy dev`
+3. Firebase will output a preview URL you can share.
+
 ## Local Development
 1. Install node: `brew install node`
 1. Install Yarn: `brew install yarn`
@@ -26,4 +37,5 @@ RESOURCES:
 3. Launch the dev server: `make dev`. Override the port with `make dev PORT=3000` if necessary. This uses `http-server` with caching disabled so changes to `index.js` reload immediately.
 4. Open http://localhost:8080 (or your chosen port) to view the globe.
 5. Without Node.js tooling, fall back to `make serve-python PORT=8080`, noting it lacks the CORS headers provided by the default target.
-6. Customize `visited.json` with ISO numeric (e.g. `"840"`) or alpha-3 (e.g. `"USA"`) codes to control the "Visited countries” toggle.
+6. Customize `visited.json` with ISO numeric (e.g. `"840"`) or alpha-3 (e.g. `"USA"`) codes to control the "Visited countries" view in the sidebar.
+7. Edit `lived.json` to add or update entries for the "Places I've lived" view. Each record supports `description`, `countryCode`, `cities`, and `period`.

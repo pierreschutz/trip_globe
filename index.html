@@ -11,50 +11,89 @@
 </head>
 <body>
 
+<aside id="sidebar" class="sidebar" aria-hidden="true">
+    <header class="sidebar__header">
+        <h2 class="sidebar__title">Pierre's Maps</h2>
+    </header>
+    <div class="sidebar__body">
+        <nav class="sidebar-nav" aria-label="Map views">
+            <button type="button"
+                    class="sidebar-nav__item sidebar-nav__item--active"
+                    data-view="explorer"
+                    aria-pressed="true">
+                Country explorer
+            </button>
+            <button type="button"
+                    class="sidebar-nav__item"
+                    data-view="visited"
+                    aria-pressed="false">
+                Visited countries
+            </button>
+            <button type="button"
+                    class="sidebar-nav__item"
+                    data-view="lived"
+                    aria-pressed="false">
+                Places I've lived
+            </button>
+        </nav>
+    </div>
+</aside>
+<div id="sidebarOverlay" class="sidebar-overlay" tabindex="-1" aria-hidden="true"></div>
+
 <div class="content">
-    <div class="appbar">
-        <a href="https://pierreschutz.com" class="appbar-link">
-            <img
-                    src="images/logo.svg"
-                    alt="Pierre logo"
-                    width="36" height="36"
-            >
-        </a>
-        <div class="appbar-divider">
-            <h1>What a beautiful world!</h1>
-
-        </div>
-
-        <a href="https://github.com/pierreschutz/" target="_blank" class="appbar-link">
-            <img src="images/icons8-github.svg"
-                 width="36"
-                 height="36"
-            />
-        </a>
-
-    </div>
-    <div class="title">
-        <p class="description">Click on the globe and drag to make it move.</p>
-        <label class="visited-toggle">
-            <input type="checkbox" id="visitedToggle" class="visited-toggle__checkbox">
-            <span class="visited-toggle__switch" aria-hidden="true">
-                <span class="visited-toggle__knob"></span>
-            </span>
-            <span class="visited-toggle__label">Visited countries</span>
-        </label>
-
-    </div>
     <div class="viz">
         <div id="mapViz"></div>
+
+        <div class="viz-overlay overlay-top">
+            <div class="appbar">
+                <div class="appbar-section appbar-section--left">
+                    <button id="sidebarToggle"
+                            class="sidebar-toggle"
+                            type="button"
+                            aria-label="Open sidebar"
+                            aria-controls="sidebar"
+                            aria-expanded="false">
+                        <span class="sidebar-toggle__icon" aria-hidden="true"></span>
+                    </button>
+                    <span class="view-label" data-view-label></span>
+                </div>
+                <div class="appbar-section appbar-section--right">
+                    <a href="https://pierreschutz.com"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="appbar-link appbar-link--icon"
+                       aria-label="Website">
+                        <span class="appbar-icon">
+                            <img src="images/logo.svg" alt="" width="24" height="24">
+                        </span>
+                    </a>
+                    <a href="https://github.com/pierreschutz/trip_globe"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="appbar-link appbar-link--icon"
+                       aria-label="GitHub repository">
+                        <span class="appbar-icon">
+                            <img src="images/icons8-github.svg" alt="" width="24" height="24">
+                        </span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/pierreschutz/"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="appbar-link appbar-link--icon appbar-link--linkedin"
+                       aria-label="LinkedIn">
+                        <span class="appbar-icon appbar-icon--linkedin">in</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="viz-overlay overlay-bottom">
+            <span class="footer-text">&copy; Pierre Schutz 2025</span>
+        </div>
     </div>
-
-</div>
-
-<div class="footer">
-    <span class="footer-text">&copy; Pierre Schutz 2025</span>
 </div>
 
 <script type="text/javascript" src="https://d3js.org/topojson.v1.min.js"></script>
-<script type="text/javascript" src="index.js"></script>
+<script type="module" src="src/main.js"></script>
 </body>
 </html>
