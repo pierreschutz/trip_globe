@@ -389,7 +389,6 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         .on("mouseover", function(d) {
             const selection = d3.select(this);
             selection.interrupt();
-            this.parentNode.appendChild(this);
             const highlightFill = d3.rgb(getCurrentFill(d)).brighter(1.1).toString();
             selection
                 .transition()
