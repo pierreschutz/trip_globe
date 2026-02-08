@@ -1,5 +1,11 @@
 import { loadVisitedCountries, loadLivedRecords } from "./tripService.js";
 
+let _countryList = []; // { name, code } pairs populated by loadStaticData
+
+export function getCountryList() {
+    return _countryList;
+}
+
 // Load static data that doesn't change per user (world geometry, names, facts)
 export function loadStaticData() {
     return new Promise((resolve, reject) => {
@@ -16,6 +22,7 @@ export function loadStaticData() {
                 }
 
                 const nameById = buildNameMap(names);
+                _countryList = buildCountryList(names);
 
                 d3.json("country-facts.json", function(factsError, facts) {
                     if (factsError) {
@@ -44,51 +51,26 @@ export async function loadUserTripData(uid) {
     return { visitedSet, livedIndex };
 }
 
-// Load trip data from static JSON files (fallback / explorer mode)
-export function loadStaticTripData() {
-    return new Promise((resolve, reject) => {
-        d3.json("visited.json", function(visitedError, visitedData) {
-            if (visitedError) {
-                reject(visitedError);
-                return;
-            }
-
-            const visitedSet = buildVisitedSet(visitedData || { visited: [] });
-
-            d3.json("lived.json", function(livedError, livedData) {
-                if (livedError) {
-                    reject(livedError);
-                    return;
-                }
-
-                const livedIndex = buildLivedIndex(livedData || { records: [] });
-
-                resolve({ visitedSet, livedIndex });
-            });
-        });
-    });
-}
-
-// Combined loader for backwards compatibility
-export function loadApplicationData() {
-    return new Promise((resolve, reject) => {
-        loadStaticData()
-            .then(staticData => {
-                loadStaticTripData()
-                    .then(tripData => {
-                        resolve({ ...staticData, ...tripData });
-                    })
-                    .catch(reject);
-            })
-            .catch(reject);
-    });
-}
-
 export function emptyTripData() {
     return {
         visitedSet: d3.set(),
         livedIndex: { set: d3.set(), detail: {} }
     };
+}
+
+export function buildCountryList(records) {
+    const seen = new Set();
+    const list = [];
+    records.forEach(record => {
+        const name = (record.name || "").trim();
+        const code = normalizeId(record.iso_n3);
+        if (name && code && !seen.has(name)) {
+            seen.add(name);
+            list.push({ name, code });
+        }
+    });
+    list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
 }
 
 export function buildNameMap(records) {

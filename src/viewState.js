@@ -37,12 +37,12 @@ export function updateUrlForView(view) {
     }
 }
 
-export function labelForView(view) {
+export function labelForView(view, isOwnProfile) {
     switch (view) {
         case "visited":
             return "Visited countries";
         case "lived":
-            return "Places I've lived";
+            return isOwnProfile ? "Places I've lived" : "Places lived";
         case "explorer":
         default:
             return "Country explorer";

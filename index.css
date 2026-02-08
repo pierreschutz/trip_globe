@@ -6,7 +6,6 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    min-width: 400px;
     color: white;
 }
 
@@ -22,10 +21,6 @@ p, h2, h6 {
 
 a {
     text-decoration: none;
-}
-
-head {
-    display: none;
 }
 
 .center {
@@ -112,7 +107,11 @@ head {
 .sidebar-nav__item:focus {
     color: #ffb703;
     transform: translateX(4px);
-    outline: none;
+}
+
+.sidebar-nav__item:focus-visible {
+    outline: 2px solid #ffb703;
+    outline-offset: 2px;
 }
 
 .sidebar-nav__item--active {
@@ -148,7 +147,11 @@ head {
 .sidebar-toggle:focus {
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.4);
-    outline: none;
+}
+
+.sidebar-toggle:focus-visible {
+    outline: 2px solid #ffb703;
+    outline-offset: 2px;
 }
 
 .sidebar-toggle__icon {
@@ -529,7 +532,6 @@ head {
     flex: 1;
     background: none;
     border: none;
-    outline: none;
     color: white;
     font-family: "Roboto Mono", monospace;
     font-size: 0.95rem;
@@ -539,6 +541,11 @@ head {
 
 .username-modal__input::placeholder {
     color: rgba(255, 255, 255, 0.25);
+}
+
+.username-modal__input:focus-visible {
+    outline: 2px solid #ffb703;
+    outline-offset: -2px;
 }
 
 .username-modal__error {
@@ -570,4 +577,357 @@ head {
 .username-modal__submit:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+/* Edit Panel */
+
+.edit-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+}
+
+.edit-section__toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.edit-section__toggle-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 600;
+}
+
+.edit-section__toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-family: "Roboto Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-section__toggle-btn--active {
+    background: rgba(255, 183, 3, 0.2);
+    border-color: #ffb703;
+    color: #ffb703;
+}
+
+.edit-section__lived-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.edit-section__form-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+}
+
+.edit-section__input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 0.45rem 0.6rem;
+    font-family: "Roboto Mono", monospace;
+    font-size: 0.8rem;
+    color: white;
+    transition: border-color 0.2s ease;
+}
+
+.edit-section__input:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.edit-section__input:focus-visible {
+    outline: 2px solid #ffb703;
+    outline-offset: -2px;
+}
+
+.edit-section__input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.edit-section__error {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #ff6b6b;
+    min-height: 1em;
+    font-weight: normal;
+}
+
+.edit-section__add-btn {
+    background: #ffb703;
+    color: #0a0e18;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-family: "Roboto Mono", monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.edit-section__add-btn:hover:not(:disabled) {
+    background: #ffc733;
+}
+
+.edit-section__add-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Edit mode cursor */
+.edit-mode #mapViz svg path {
+    cursor: pointer;
+}
+
+/* Profile Overlays */
+
+.profile-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 7, 14, 0.75);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.profile-overlay__card {
+    background: rgba(12, 18, 32, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.profile-overlay__card h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+}
+
+.profile-overlay__card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: normal;
+}
+
+.profile-overlay__card a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: #ffb703;
+    color: #0a0e18;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-family: "Roboto Mono", monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    transition: background 0.2s ease;
+}
+
+.profile-overlay__card a:hover {
+    background: #ffc733;
+}
+
+/* User Menu Dropdown */
+
+.user-menu-wrapper {
+    position: relative;
+}
+
+.user-menu {
+    position: absolute;
+    top: 52px;
+    right: 0;
+    background: rgba(12, 18, 32, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    z-index: 1100;
+}
+
+.user-menu__name {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.05em;
+    font-weight: normal;
+}
+
+.user-menu__sign-out {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-family: "Roboto Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.user-menu__sign-out:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Lived Entry List */
+
+.edit-section__lived-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.edit-section__lived-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: normal;
+}
+
+.edit-section__lived-item-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.edit-section__delete-btn {
+    flex-shrink: 0;
+    background: none;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 4px;
+    padding: 0.15rem 0.4rem;
+    font-family: "Roboto Mono", monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #ff6b6b;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.edit-section__delete-btn:hover {
+    background: rgba(255, 107, 107, 0.15);
+    border-color: #ff6b6b;
+}
+
+/* Loading Overlay */
+
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 7, 14, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 150;
+}
+
+.loading-overlay__text {
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    animation: loading-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+/* Toast */
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(12, 18, 32, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-family: "Roboto Mono", monospace;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+    z-index: 2500;
+    animation: toast-in 0.3s ease-out;
+}
+
+.toast--error {
+    border-color: rgba(255, 107, 107, 0.4);
+    color: #ff6b6b;
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Mobile Breakpoints */
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 280px;
+    }
+
+    .appbar {
+        padding: 8px calc(10px + env(safe-area-inset-right, 0px)) 0 calc(10px + env(safe-area-inset-left, 0px));
+    }
+
+    .appbar-section--right {
+        gap: 8px;
+    }
+
+    .username-modal {
+        padding: 1.5rem 1.25rem;
+        width: 95%;
+    }
+
+    .username-modal__prefix {
+        font-size: 0.65rem;
+    }
+
+    .user-menu {
+        min-width: 140px;
+    }
 }

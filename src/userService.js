@@ -28,6 +28,20 @@ export function validateUsername(username) {
     return null;
 }
 
+export async function getUidByUsername(username) {
+    const db = getDb();
+    const doc = await db.collection("usernames").doc(username).get();
+    if (doc.exists) {
+        return doc.data().uid;
+    }
+    return null;
+}
+
+export async function updateProfileVisibility(uid, isPublic) {
+    const db = getDb();
+    await db.collection("users").doc(uid).update({ isPublic });
+}
+
 export async function createUserProfile(user, username) {
     const db = getDb();
     const batch = db.batch();
