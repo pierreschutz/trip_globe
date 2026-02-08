@@ -5,12 +5,8 @@
   "targets": {
     "trip-globe-viz": {
       "hosting": {
-        "prod": [
-          "trip-globe-viz"
-        ],
-        "staging": [
-          "trip-globe-staging"
-        ]
+        "prod": ["trip-globe-viz"],
+        "staging": ["trip-globe-staging"]
       }
     }
   }
