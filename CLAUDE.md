@@ -11,22 +11,34 @@ make serve-python      # fallback without Node
 
 ## Architecture
 
-Static single-page app. No backend, no build step, no database.
+Single-page app with Firebase backend. No build step.
 
-- `index.html` — entry point, loads D3 v3 from CDN + topojson v1
-- `src/main.js` — boot, sidebar init, data loading
+- `index.html` — entry point, loads D3 v3 + Firebase SDK from CDN
+- `src/main.js` — boot, sidebar init, auth integration, data loading
 - `src/globe.js` — D3 orthographic projection, rendering, drag/zoom interaction
-- `src/dataLoader.js` — loads and normalizes JSON/TSV data files
+- `src/dataLoader.js` — loads static map data + user trip data from Firestore
 - `src/viewState.js` — URL hash ↔ view state (explorer/visited/lived)
+- `src/firebase.js` — Firebase app initialization and config
+- `src/auth.js` — Google OAuth sign-in/out, auth state management
+- `src/userService.js` — user profile CRUD, username validation
+- `src/usernameModal.js` — first-login username picker UI
+- `src/tripService.js` — Firestore CRUD for visited/lived data
 - `index.css` — all styles
+- `firestore.rules` — Firestore security rules
 
-## Data Files
+## Data
 
-- `visited.json` — ISO 3166 numeric codes of visited countries
-- `lived.json` — records with country, cities, period, description
+**Static (committed, shared):**
+- `world.json` — TopoJSON world geometry
 - `country-names.tsv` — code → name mapping (iso_n3, iso_a3, adm0_a3, sov_a3)
 - `country-facts.json` — country metadata shown in explorer view
-- `world.json` — TopoJSON world geometry
+
+**Per-user (Firestore):**
+- `users/{uid}/visited/{code}` — visited countries
+- `users/{uid}/lived/{id}` — places lived records
+
+**Legacy (reference only, no longer read by app):**
+- `visited.json`, `lived.json` — Pierre's original data, migrated to Firestore
 
 ## Code Style
 

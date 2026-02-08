@@ -9,6 +9,40 @@ export function initializeResponsiveGlobe(data, initialView = DEFAULT_VIEW) {
     d3.select(window).on("resize.globe", resizeGlobe);
 }
 
+export function setEditMode(enabled) {
+    const svgSelection = d3.select("#mapViz").select("svg");
+    if (svgSelection.empty()) return;
+    const state = svgSelection.node().__globeState;
+    if (!state) return;
+    state.editMode = enabled;
+    d3.select("body").classed("edit-mode", enabled);
+}
+
+export function setOnCountryClick(callback) {
+    const svgSelection = d3.select("#mapViz").select("svg");
+    if (svgSelection.empty()) return;
+    const state = svgSelection.node().__globeState;
+    if (!state) return;
+    state.onCountryClick = callback;
+}
+
+export function flashCountry(countryId, color) {
+    const svgSelection = d3.select("#mapViz").select("svg");
+    if (svgSelection.empty()) return;
+    const state = svgSelection.node().__globeState;
+    if (!state || !state.countryPaths) return;
+
+    state.countryPaths.each(function(d) {
+        if (d.normalizedId === countryId) {
+            const sel = d3.select(this);
+            sel.interrupt();
+            sel.attr("fill", color || "#4ade80")
+                .transition().duration(600).ease("cubic-out")
+                .attr("fill", state.getCurrentFill(d));
+        }
+    });
+}
+
 export function updateGlobeTripData(tripData) {
     const svgSelection = d3.select("#mapViz").select("svg");
     if (svgSelection.empty()) {
@@ -319,6 +353,9 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         updateUrlForView(view);
     }
 
+    state.editMode = false;
+    state.onCountryClick = null;
+
     state.updateCountryFills = updateCountryFills;
     state.updatePaths = () => {
         state.countryPaths.attr("d", path);
@@ -403,22 +440,32 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         .on("dragstart", function() {
             if (d3.event && d3.event.sourceEvent) {
                 d3.event.sourceEvent.preventDefault();
+                state._dragTarget = d3.event.sourceEvent.target;
+            } else {
+                state._dragTarget = null;
             }
             stopInertia();
             inertia.vx = 0;
             inertia.vy = 0;
             lastDragTimestamp = Date.now();
             lastDragDelta = { lon: 0, lat: 0, dt: 0 };
+            state._dragged = false;
             hideTooltip();
         })
         .on("drag", function() {
+            const dx = d3.event.dx;
+            const dy = d3.event.dy;
+            if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                state._dragged = true;
+            }
+
             const now = Date.now();
             const dt = lastDragTimestamp ? (now - lastDragTimestamp) : 0;
             lastDragTimestamp = now;
 
             const degreesPerPixel = 360 / (2 * Math.PI * (state.radius || radius || 1));
-            const deltaLon = d3.event.dx * degreesPerPixel;
-            const deltaLat = d3.event.dy * degreesPerPixel;
+            const deltaLon = dx * degreesPerPixel;
+            const deltaLat = dy * degreesPerPixel;
 
             const rotate = projection.rotate();
             const newLon = rotate[0] + deltaLon;
@@ -439,6 +486,16 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         })
         .on("dragend", function() {
             lastDragTimestamp = null;
+
+            // D3 v3 drag suppresses click events, so handle click here
+            if (!state._dragged && state.editMode && state.onCountryClick && state._dragTarget) {
+                const datum = d3.select(state._dragTarget).datum();
+                if (datum && datum.normalizedId) {
+                    state.onCountryClick(datum);
+                }
+            }
+            state._dragTarget = null;
+
             if (!lastDragDelta.dt) {
                 inertia.vx = 0;
                 inertia.vy = 0;

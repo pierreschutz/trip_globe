@@ -3,6 +3,7 @@ import { initializeResponsiveGlobe, updateGlobeTripData } from "./globe.js";
 import { parseViewFromUrl } from "./viewState.js";
 import { initFirebase } from "./firebase.js";
 import { initAuth, signIn, signOut, onAuthStateChanged } from "./auth.js";
+import { initEditPanel, removeEditPanel } from "./editPanel.js";
 
 function initializeSidebar() {
     const body = d3.select("body");
@@ -75,10 +76,12 @@ function boot() {
             try {
                 const tripData = await loadUserTripData(user.uid);
                 updateGlobeTripData(tripData);
+                initEditPanel(user.uid);
             } catch (err) {
                 console.error("Failed to load user trip data", err);
             }
         } else {
+            removeEditPanel();
             updateGlobeTripData(emptyTripData());
         }
     });

@@ -1,5 +1,11 @@
 import { loadVisitedCountries, loadLivedRecords } from "./tripService.js";
 
+let _countryList = []; // { name, code } pairs populated by loadStaticData
+
+export function getCountryList() {
+    return _countryList;
+}
+
 // Load static data that doesn't change per user (world geometry, names, facts)
 export function loadStaticData() {
     return new Promise((resolve, reject) => {
@@ -16,6 +22,7 @@ export function loadStaticData() {
                 }
 
                 const nameById = buildNameMap(names);
+                _countryList = buildCountryList(names);
 
                 d3.json("country-facts.json", function(factsError, facts) {
                     if (factsError) {
@@ -89,6 +96,21 @@ export function emptyTripData() {
         visitedSet: d3.set(),
         livedIndex: { set: d3.set(), detail: {} }
     };
+}
+
+export function buildCountryList(records) {
+    const seen = new Set();
+    const list = [];
+    records.forEach(record => {
+        const name = (record.name || "").trim();
+        const code = normalizeId(record.iso_n3);
+        if (name && code && !seen.has(name)) {
+            seen.add(name);
+            list.push({ name, code });
+        }
+    });
+    list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
 }
 
 export function buildNameMap(records) {
