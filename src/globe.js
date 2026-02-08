@@ -9,6 +9,14 @@ export function initializeResponsiveGlobe(data, initialView = DEFAULT_VIEW) {
     d3.select(window).on("resize.globe", resizeGlobe);
 }
 
+export function setIsOwnProfile(isOwn) {
+    const svgSelection = d3.select("#mapViz").select("svg");
+    if (svgSelection.empty()) return;
+    const state = svgSelection.node().__globeState;
+    if (!state) return;
+    state.isOwnProfile = isOwn;
+}
+
 export function setEditMode(enabled) {
     const svgSelection = d3.select("#mapViz").select("svg");
     if (svgSelection.empty()) return;
@@ -320,7 +328,7 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         if (viewLabel.empty()) {
             return;
         }
-        viewLabel.text(labelForView(state.currentView));
+        viewLabel.text(labelForView(state.currentView, state.isOwnProfile));
     }
 
     function updateNavState(view) {
@@ -354,6 +362,7 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
     }
 
     state.editMode = false;
+    state.isOwnProfile = false;
     state.onCountryClick = null;
 
     state.updateCountryFills = updateCountryFills;
@@ -568,7 +577,7 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         .scaleExtent([1, 4])
         .on("zoom", function() {
             const zoomScale = d3.event.scale;
-            svg.attr("transform", `scale(${zoomScale})`);
+            content.attr("transform", `scale(${zoomScale})`);
         })
     );
 

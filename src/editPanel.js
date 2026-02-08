@@ -1,9 +1,11 @@
-import { addVisitedCountry, removeVisitedCountry, addLivedRecord, deleteLivedRecord } from "./tripService.js";
+import { addVisitedCountry, removeVisitedCountry, addLivedRecord, deleteLivedRecord, loadLivedRecords } from "./tripService.js";
 import { loadUserTripData, getCountryList } from "./dataLoader.js";
 import { updateGlobeTripData, setEditMode, setOnCountryClick, flashCountry } from "./globe.js";
+import { updateProfileVisibility } from "./userService.js";
 
 let currentUid = null;
 let editActive = false;
+let livedListContainer = null;
 
 function createElement(tag, className, textContent) {
     const el = document.createElement(tag);
@@ -12,7 +14,7 @@ function createElement(tag, className, textContent) {
     return el;
 }
 
-export function initEditPanel(uid) {
+export function initEditPanel(uid, profile) {
     currentUid = uid;
 
     const sidebarBody = document.querySelector(".sidebar__body");
@@ -22,6 +24,30 @@ export function initEditPanel(uid) {
 
     const section = createElement("div", "edit-section");
     section.id = "editSection";
+
+    // Public profile toggle
+    const visibilityRow = createElement("div", "edit-section__toggle-row");
+    const visibilityLabel = createElement("span", "edit-section__toggle-label", "Public profile");
+    let isPublic = profile ? !!profile.isPublic : false;
+    const visibilityBtn = createElement("button", "edit-section__toggle-btn", isPublic ? "On" : "Off");
+    visibilityBtn.type = "button";
+    visibilityBtn.classList.toggle("edit-section__toggle-btn--active", isPublic);
+    visibilityBtn.addEventListener("click", async () => {
+        isPublic = !isPublic;
+        visibilityBtn.textContent = isPublic ? "On" : "Off";
+        visibilityBtn.classList.toggle("edit-section__toggle-btn--active", isPublic);
+        try {
+            await updateProfileVisibility(uid, isPublic);
+        } catch (err) {
+            console.error("Failed to update visibility", err);
+            isPublic = !isPublic;
+            visibilityBtn.textContent = isPublic ? "On" : "Off";
+            visibilityBtn.classList.toggle("edit-section__toggle-btn--active", isPublic);
+        }
+    });
+    visibilityRow.appendChild(visibilityLabel);
+    visibilityRow.appendChild(visibilityBtn);
+    section.appendChild(visibilityRow);
 
     // Edit mode toggle
     const toggleRow = createElement("div", "edit-section__toggle-row");
@@ -34,6 +60,9 @@ export function initEditPanel(uid) {
         toggleBtn.classList.toggle("edit-section__toggle-btn--active", editActive);
         setEditMode(editActive);
         livedForm.style.display = editActive ? "flex" : "none";
+        if (editActive) {
+            renderLivedList();
+        }
     });
     toggleRow.appendChild(toggleLabel);
     toggleRow.appendChild(toggleBtn);
@@ -103,12 +132,17 @@ export function initEditPanel(uid) {
             descInput.value = "";
             periodInput.value = "";
             await refreshTripData();
+            await renderLivedList();
         } catch (err) {
             console.error("Failed to add lived record", err);
+            formError.textContent = "Failed to add \u2014 try again";
         }
         addBtn.disabled = false;
         addBtn.textContent = "Add lived record";
     });
+
+    livedListContainer = createElement("div", "edit-section__lived-list");
+    livedListContainer.style.display = "none";
 
     livedForm.appendChild(formTitle);
     livedForm.appendChild(countryInput);
@@ -118,6 +152,7 @@ export function initEditPanel(uid) {
     livedForm.appendChild(periodInput);
     livedForm.appendChild(formError);
     livedForm.appendChild(addBtn);
+    livedForm.appendChild(livedListContainer);
     section.appendChild(livedForm);
 
     sidebarBody.appendChild(section);
@@ -139,13 +174,59 @@ export function initEditPanel(uid) {
             await refreshTripData();
         } catch (err) {
             console.error("Failed to toggle visited", err);
+            flashCountry(datum.normalizedId, "#ff6b6b");
         }
     });
+}
+
+async function renderLivedList() {
+    if (!livedListContainer || !currentUid) return;
+    livedListContainer.style.display = "flex";
+    livedListContainer.textContent = "";
+
+    try {
+        const records = await loadLivedRecords(currentUid);
+        if (!records.length) {
+            livedListContainer.style.display = "none";
+            return;
+        }
+        records.forEach(record => {
+            const item = createElement("div", "edit-section__lived-item");
+            const parts = [record.country || ""];
+            if (record.cities && record.cities.length) {
+                parts.push(record.cities.join(", "));
+            }
+            if (record.period) {
+                parts.push(record.period);
+            }
+            const text = createElement("span", "edit-section__lived-item-text", parts.filter(Boolean).join(" \u2014 "));
+            const delBtn = createElement("button", "edit-section__delete-btn", "\u00D7");
+            delBtn.type = "button";
+            delBtn.setAttribute("aria-label", `Delete ${record.country || "record"}`);
+            delBtn.addEventListener("click", async () => {
+                delBtn.disabled = true;
+                try {
+                    await deleteLivedRecord(currentUid, record.id);
+                    await refreshTripData();
+                    await renderLivedList();
+                } catch (err) {
+                    console.error("Failed to delete lived record", err);
+                    delBtn.disabled = false;
+                }
+            });
+            item.appendChild(text);
+            item.appendChild(delBtn);
+            livedListContainer.appendChild(item);
+        });
+    } catch (err) {
+        console.error("Failed to load lived records", err);
+    }
 }
 
 export function removeEditPanel() {
     currentUid = null;
     editActive = false;
+    livedListContainer = null;
     setEditMode(false);
     setOnCountryClick(null);
     const section = document.getElementById("editSection");

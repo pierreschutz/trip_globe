@@ -14,7 +14,8 @@ make serve-python      # fallback without Node
 Single-page app with Firebase backend. No build step.
 
 - `index.html` — entry point, loads D3 v3 + Firebase SDK from CDN
-- `src/main.js` — boot, sidebar init, auth integration, data loading
+- `src/main.js` — boot, sidebar init, auth integration, route-aware data loading
+- `src/router.js` — client-side path routing (`/{username}` → public profiles)
 - `src/globe.js` — D3 orthographic projection, rendering, drag/zoom interaction
 - `src/dataLoader.js` — loads static map data + user trip data from Firestore
 - `src/viewState.js` — URL hash ↔ view state (explorer/visited/lived)

@@ -1,4 +1,5 @@
 import { validateUsername, isUsernameTaken, createUserProfile } from "./userService.js";
+import { signOut } from "./auth.js";
 
 function createElement(tag, className, textContent) {
     const el = document.createElement(tag);
@@ -87,6 +88,19 @@ export function showUsernameModal(user, onComplete) {
             error.textContent = "Something went wrong. Please try again.";
             submit.disabled = false;
             submit.textContent = "Claim username";
+        }
+    });
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !submit.disabled) {
+            submit.click();
+        }
+    });
+
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+            signOut().catch(err => console.error("Sign-out after dismiss failed", err));
         }
     });
 

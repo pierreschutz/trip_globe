@@ -3,9 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive 3D globe to visualize countries you've visited and places you've lived.">
+    <meta property="og:title" content="Trip Globe">
+    <meta property="og:description" content="Interactive 3D globe to visualize countries you've visited and places you've lived.">
     <title>My world map</title>
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- libraries-->
-    <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -93,19 +100,43 @@
                             aria-label="Sign in with Google">
                         <span class="appbar-icon appbar-icon--auth">G</span>
                     </button>
-                    <button id="authUserMenu"
-                            type="button"
-                            class="appbar-link appbar-link--icon auth-user-menu"
-                            style="display: none;"
-                            aria-label="User menu">
-                        <img id="authUserPhoto" class="auth-user-photo" src="" alt="Profile" width="44" height="44" />
-                    </button>
+                    <div class="user-menu-wrapper">
+                        <button id="authUserMenu"
+                                type="button"
+                                class="appbar-link appbar-link--icon auth-user-menu"
+                                style="display: none;"
+                                aria-label="User menu"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                            <img id="authUserPhoto" class="auth-user-photo" src="" alt="Profile" width="44" height="44" />
+                        </button>
+                        <div id="userMenuDropdown" class="user-menu" style="display: none;">
+                            <span id="userMenuName" class="user-menu__name"></span>
+                            <button id="userMenuSignOut" type="button" class="user-menu__sign-out">Sign out</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="viz-overlay overlay-bottom">
-            <span class="footer-text">&copy; Pierre Schutz 2025</span>
+            <span class="footer-text">&copy; Pierre Schutz 2026</span>
+        </div>
+    </div>
+
+    <div id="privateOverlay" class="profile-overlay" style="display:none">
+        <div class="profile-overlay__card">
+            <h2>Private Profile</h2>
+            <p>This user's map is private.</p>
+            <a href="/">Go to your globe</a>
+        </div>
+    </div>
+
+    <div id="notFoundOverlay" class="profile-overlay" style="display:none">
+        <div class="profile-overlay__card">
+            <h2>User Not Found</h2>
+            <p>No globe exists at this URL.</p>
+            <a href="/">Go to your globe</a>
         </div>
     </div>
 </div>

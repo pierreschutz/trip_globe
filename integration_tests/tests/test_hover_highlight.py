@@ -165,3 +165,36 @@ def test_click_then_hover(globe_page):
     print(f"\nWhite-stroke after click+hover: {white_count}")
 
     assert white_count == 0, f"{white_count} countries stuck after click+hover"
+
+
+def test_rapid_continuous_hover(globe_page):
+    """Sweeping the mouse rapidly across the globe should not leave accumulated highlights."""
+    # Sweep from x=300 to x=800 at y=450 in 2px steps with zero waits
+    for x in range(300, 802, 2):
+        globe_page.mouse.move(x, 450)
+
+    # Wait for any CSS transitions to settle
+    globe_page.wait_for_timeout(1000)
+
+    # Move away to a corner with no country
+    globe_page.mouse.move(50, 50)
+    globe_page.wait_for_timeout(500)
+
+    # Assert zero white-stroke countries remain
+    result = globe_page.evaluate("""() => {
+        let count = 0;
+        let stuck = [];
+        document.querySelectorAll('#mapViz svg path').forEach(p => {
+            if (p.getAttribute('stroke') === '#ffffff') {
+                count++;
+                const d = p.__data__;
+                stuck.push(d ? d.normalizedId : 'unknown');
+            }
+        });
+        return { count, stuck: stuck.slice(0, 10) };
+    }""")
+    print(f"\nWhite-stroke countries after rapid sweep: {result}")
+
+    assert result["count"] == 0, (
+        f"{result['count']} countries stuck with white stroke after rapid sweep: {result['stuck']}"
+    )
