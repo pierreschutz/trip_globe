@@ -1,6 +1,8 @@
 import { loadApplicationData } from "./dataLoader.js";
 import { initializeResponsiveGlobe } from "./globe.js";
 import { parseViewFromUrl } from "./viewState.js";
+import { initFirebase } from "./firebase.js";
+import { initAuth, signIn, signOut, onAuthStateChanged } from "./auth.js";
 
 function initializeSidebar() {
     const body = d3.select("body");
@@ -37,8 +39,41 @@ function initializeSidebar() {
     window.__sidebarControl = { setOpen };
 }
 
+function initAuthButtons() {
+    const signInBtn = document.getElementById("authSignIn");
+    const userMenuBtn = document.getElementById("authUserMenu");
+
+    if (signInBtn) {
+        signInBtn.addEventListener("click", () => {
+            signIn().catch(err => console.error("Sign-in failed", err));
+        });
+    }
+
+    if (userMenuBtn) {
+        userMenuBtn.addEventListener("click", () => {
+            signOut().catch(err => console.error("Sign-out failed", err));
+        });
+    }
+}
+
+function updateSidebarTitle(profile) {
+    const titleEl = document.querySelector(".sidebar__title");
+    if (titleEl) {
+        titleEl.textContent = profile ? `${profile.displayName}'s Maps` : "Trip Globe";
+    }
+}
+
 function boot() {
     initializeSidebar();
+    initFirebase();
+    initAuthButtons();
+
+    onAuthStateChanged((user, profile) => {
+        updateSidebarTitle(profile);
+    });
+
+    initAuth();
+
     loadApplicationData()
         .then(data => {
             const initialView = parseViewFromUrl();
