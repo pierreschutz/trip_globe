@@ -1,5 +1,5 @@
-import { loadApplicationData } from "./dataLoader.js";
-import { initializeResponsiveGlobe } from "./globe.js";
+import { loadStaticData, loadUserTripData, emptyTripData } from "./dataLoader.js";
+import { initializeResponsiveGlobe, updateGlobeTripData } from "./globe.js";
 import { parseViewFromUrl } from "./viewState.js";
 import { initFirebase } from "./firebase.js";
 import { initAuth, signIn, signOut, onAuthStateChanged } from "./auth.js";
@@ -68,16 +68,29 @@ function boot() {
     initFirebase();
     initAuthButtons();
 
-    onAuthStateChanged((user, profile) => {
+    onAuthStateChanged(async (user, profile) => {
         updateSidebarTitle(profile);
+
+        if (user) {
+            try {
+                const tripData = await loadUserTripData(user.uid);
+                updateGlobeTripData(tripData);
+            } catch (err) {
+                console.error("Failed to load user trip data", err);
+            }
+        } else {
+            updateGlobeTripData(emptyTripData());
+        }
     });
 
     initAuth();
 
-    loadApplicationData()
-        .then(data => {
+    // Load static data (world geometry, names, facts) + empty trip data for initial render
+    loadStaticData()
+        .then(staticData => {
             const initialView = parseViewFromUrl();
-            initializeResponsiveGlobe(data, initialView);
+            const empty = emptyTripData();
+            initializeResponsiveGlobe({ ...staticData, ...empty }, initialView);
         })
         .catch(error => {
             console.error("Failed to initialise globe", error);

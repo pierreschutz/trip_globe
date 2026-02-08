@@ -9,6 +9,23 @@ export function initializeResponsiveGlobe(data, initialView = DEFAULT_VIEW) {
     d3.select(window).on("resize.globe", resizeGlobe);
 }
 
+export function updateGlobeTripData(tripData) {
+    const svgSelection = d3.select("#mapViz").select("svg");
+    if (svgSelection.empty()) {
+        return;
+    }
+    const state = svgSelection.node().__globeState;
+    if (!state) {
+        return;
+    }
+    state.visitedSet = tripData.visitedSet || d3.set();
+    state.livedSet = (tripData.livedIndex && tripData.livedIndex.set) || d3.set();
+    state.livedDetails = (tripData.livedIndex && tripData.livedIndex.detail) || {};
+    if (state.updateCountryFills) {
+        state.updateCountryFills(200);
+    }
+}
+
 export function resizeGlobe() {
     const viz = d3.select("#mapViz");
     const svgSelection = viz.select("svg");
@@ -127,8 +144,7 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
     state.countries = countries;
     state.color = color;
 
-    const visited = visitedSet || d3.set();
-    state.visitedSet = visited;
+    state.visitedSet = visitedSet || d3.set();
 
     const navItems = d3.selectAll(".sidebar-nav__item");
     state.navItems = navItems;
@@ -142,10 +158,8 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         .style("opacity", 0);
     state.tooltip = tooltip;
 
-    const livedSet = livedIndex.set || d3.set();
-    const livedDetails = livedIndex.detail || {};
-    state.livedSet = livedSet;
-    state.livedDetails = livedDetails;
+    state.livedSet = livedIndex.set || d3.set();
+    state.livedDetails = livedIndex.detail || {};
 
     let currentView = initialView || DEFAULT_VIEW;
     if (navItems[0] && navItems[0].length) {
@@ -165,11 +179,11 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
     const livedHighlightFill = "#ffb703";
 
     function isVisited(id) {
-        return id && visited.has(id);
+        return id && state.visitedSet.has(id);
     }
 
     function isLived(id) {
-        return id && livedSet.has(id);
+        return id && state.livedSet.has(id);
     }
 
     function getCountryInfo(id) {
@@ -178,7 +192,7 @@ export function renderGlobe(world, nameById, facts, visitedSet, livedIndex, init
         const info = (normalizedId && facts[normalizedId]) || {};
         const name = info.name || fallbackName;
         const fact = info.fact || "";
-        const lived = normalizedId && livedDetails[normalizedId] ? livedDetails[normalizedId] : [];
+        const lived = normalizedId && state.livedDetails[normalizedId] ? state.livedDetails[normalizedId] : [];
         return { name, fact, lived };
     }
 

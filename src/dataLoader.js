@@ -1,4 +1,7 @@
-export function loadApplicationData() {
+import { loadVisitedCountries, loadLivedRecords } from "./tripService.js";
+
+// Load static data that doesn't change per user (world geometry, names, facts)
+export function loadStaticData() {
     return new Promise((resolve, reject) => {
         d3.json("world.json", function(worldError, world) {
             if (worldError || !world) {
@@ -22,35 +25,70 @@ export function loadApplicationData() {
 
                     const normalizedFacts = normalizeFacts(facts || {});
 
-                    d3.json("visited.json", function(visitedError, visitedData) {
-                        if (visitedError) {
-                            reject(visitedError);
-                            return;
-                        }
-
-                        const visitedSet = buildVisitedSet(visitedData || { visited: [] });
-
-                        d3.json("lived.json", function(livedError, livedData) {
-                            if (livedError) {
-                                reject(livedError);
-                                return;
-                            }
-
-                            const livedIndex = buildLivedIndex(livedData || { records: [] });
-
-                            resolve({
-                                world,
-                                nameById,
-                                facts: normalizedFacts,
-                                visitedSet,
-                                livedIndex
-                            });
-                        });
+                    resolve({
+                        world,
+                        nameById,
+                        facts: normalizedFacts
                     });
                 });
             });
         });
     });
+}
+
+// Load user trip data from Firestore
+export async function loadUserTripData(uid) {
+    const visitedSet = await loadVisitedCountries(uid);
+    const livedRecords = await loadLivedRecords(uid);
+    const livedIndex = buildLivedIndex({ records: livedRecords });
+    return { visitedSet, livedIndex };
+}
+
+// Load trip data from static JSON files (fallback / explorer mode)
+export function loadStaticTripData() {
+    return new Promise((resolve, reject) => {
+        d3.json("visited.json", function(visitedError, visitedData) {
+            if (visitedError) {
+                reject(visitedError);
+                return;
+            }
+
+            const visitedSet = buildVisitedSet(visitedData || { visited: [] });
+
+            d3.json("lived.json", function(livedError, livedData) {
+                if (livedError) {
+                    reject(livedError);
+                    return;
+                }
+
+                const livedIndex = buildLivedIndex(livedData || { records: [] });
+
+                resolve({ visitedSet, livedIndex });
+            });
+        });
+    });
+}
+
+// Combined loader for backwards compatibility
+export function loadApplicationData() {
+    return new Promise((resolve, reject) => {
+        loadStaticData()
+            .then(staticData => {
+                loadStaticTripData()
+                    .then(tripData => {
+                        resolve({ ...staticData, ...tripData });
+                    })
+                    .catch(reject);
+            })
+            .catch(reject);
+    });
+}
+
+export function emptyTripData() {
+    return {
+        visitedSet: d3.set(),
+        livedIndex: { set: d3.set(), detail: {} }
+    };
 }
 
 export function buildNameMap(records) {
